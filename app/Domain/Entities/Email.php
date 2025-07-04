@@ -2,93 +2,125 @@
 
 namespace App\Domain\Entities;
 
+use App\Domain\EmailVO;
 use App\Domain\Enums\Direction;
-use Str;
+use App\Domain\Enums\Origin;
+use App\Util\UUID;
 
 class Email
 {
-    public function __construct(
+    private function __construct(
         private string $id,
-        private string $from,
-        private array $to,
-        private array $cc,
-        private array $bcc,
-        private string $subject,
-        private string $body,
+        private string $account_id,
+        private EmailVO $data,
         private Direction $direction,
-        private bool $read,
         private string $folder_id,
         private string $thread_id,
         private \DateTime $processed_at,
-        private ?array $attachments = [],
-        private ?\DateTime $read_at = null
+        private bool $deleted,
+        private bool $failed,
+        private ?Origin $origin = null,
+        private ?bool $read = null,
+        private ?\DateTime $read_at = null,
+        private ?string $external_id = null,
     ) {}
 
     public static function create(
+        string $account_id,
         string $from,
         array $to,
         string $subject,
         string $body,
-        string $direction,
+        Direction $direction,
         string $folder_id,
+        ?array $attachments = null,
+        ?array $cc = null,
+        ?array $bcc = null,
+        ?Origin $origin = null,
         ?string $id = null,
-        ?bool $read = false,
+        ?bool $read = null,
         ?\DateTime $read_at = null,
-        ?array $cc = [],
-        ?array $bcc = [],
-        ?array $attachments = [],
         ?string $thread_id = null,
         ?\DateTime $processed_at = null,
+        ?string $external_id = null,
+        ?bool $deleted = null,
+        ?bool $failed = null,
+        ?string $reply_to = null
     ): Email {
-        return new self(
-            id: $id ?? Str::uuid()->toString(),
+        if ($direction === Direction::INCOMING) {
+            if (!is_bool($read))
+                throw new \InvalidArgumentException('Read flag must be true or false for incoming emails.');
+
+            if ($read && !$read_at)
+                throw new \InvalidArgumentException('Read timestamp is required if the email is marked as read.');
+
+            if ($origin)
+                throw new \InvalidArgumentException('Incoming emails cannot have an origin.');
+        }
+
+        if ($direction === Direction::OUTGOING) {
+            if ($read_at !== null)
+                throw new \InvalidArgumentException('Outgoing emails cannot have a read timestamp.');
+
+            if ($read !== null)
+                throw new \InvalidArgumentException('Outgoing emails must not define a read flag.');
+
+            if ($origin === null)
+                throw new \InvalidArgumentException('Outgoing emails must have an origin.');
+        }
+
+        $email_data = new EmailVO(
             from: $from,
             to: $to,
             cc: $cc,
             bcc: $bcc,
             subject: $subject,
             body: $body,
-            direction: Direction::from($direction),
+            attachments: $attachments,
+            reply_to: $reply_to
+        );
+
+        return new self(
+            id: $id ?? UUID::v7(),
+            account_id: $account_id,
+            data: $email_data,
+            direction: $direction,
             read: $read,
             folder_id: $folder_id,
-            thread_id: $thread_id ?? Str::uuid()->toString(),
+            thread_id: $thread_id ?? UUID::v4(),
             processed_at: $processed_at ?? new \DateTime(),
-            attachments: $attachments,
-            read_at: $read_at
+            read_at: $read_at,
+            origin: $origin,
+            external_id: $external_id,
+            deleted: $deleted ?? false,
+            failed: $failed ?? false
         );
+    }
+
+    public function markAsFailed(): void
+    {
+        if ($this->failed)
+            return;
+
+        $this->failed = true;
     }
 
     public function getId(): string
     {
         return $this->id;
     }
-
-    public function getFrom(): string
+    public function getAccountId(): string
     {
-        return $this->from;
+        return $this->account_id;
     }
 
-    public function getTo(): array
-    {
-        return $this->to;
-    }
-
-    public function getSubject(): string
-    {
-        return $this->subject;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
-    }
 
     public function getDirection(): Direction
     {
         return $this->direction;
     }
 
-    public function getRead(): bool
+    public function getRead(): ?bool
     {
         return $this->read;
     }
@@ -96,21 +128,6 @@ class Email
     public function getFolderId(): string
     {
         return $this->folder_id;
-    }
-
-    public function getCc(): array
-    {
-        return $this->cc;
-    }
-
-    public function getBcc(): array
-    {
-        return $this->bcc;
-    }
-
-    public function getAttachments(): array
-    {
-        return $this->attachments;
     }
 
     public function getThreadId(): string
@@ -133,4 +150,30 @@ class Email
         $this->read = true;
         $this->read_at = new \DateTime();
     }
+
+    public function getOrigin(): ?Origin
+    {
+        return $this->origin;
+    }
+
+    public function getData(): EmailVO
+    {
+        return $this->data;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->external_id;
+    }
+
+    public function getDeleted(): ?bool
+    {
+        return $this->deleted;
+    }
+
+    public function getFailed(): ?bool
+    {
+        return $this->failed;
+    }
+
 }

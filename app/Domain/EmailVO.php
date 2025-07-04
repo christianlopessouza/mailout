@@ -6,22 +6,22 @@ class EmailVO
 {
     private string $from;
     private array $to;
-    private array $cc;
-    private array $bcc;
+    private ?array $cc;
+    private ?array $bcc;
     private string $subject;
     private string $body;
-    private array $attachments;
-    private ?string $threadId;
+    private ?array $attachments;
+    private ?string $reply_to;
 
     public function __construct(
         string $from,
         array $to,
-        array $cc,
-        array $bcc,
         string $subject,
         string $body,
-        array $attachments,
-        ?string $threadId = null
+        ?array $cc = [],
+        ?array $bcc = [],
+        ?array $attachments = [],
+        ?string $reply_to = null
     ) {
         $this->from = $from;
         $this->to = $to;
@@ -30,8 +30,9 @@ class EmailVO
         $this->subject = $subject;
         $this->body = $body;
         $this->attachments = $attachments;
-        $this->threadId = $threadId;
+        $this->reply_to = $reply_to;
     }
+
 
     public function getFrom(): string
     {
@@ -43,12 +44,12 @@ class EmailVO
         return $this->to;
     }
 
-    public function getCc(): array
+    public function getCc(): ?array
     {
         return $this->cc;
     }
 
-    public function getBcc(): array
+    public function getBcc(): ?array
     {
         return $this->bcc;
     }
@@ -63,13 +64,13 @@ class EmailVO
         return $this->body;
     }
 
-    public function getAttachments(): array
+    public function getReplyTo(): ?string
     {
-        return $this->attachments;
+        return $this->reply_to;
     }
 
-    public function getThreadId(): ?string
+    public function getAttachments(): ?array
     {
-        return $this->threadId;
+        return $this->attachments;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Persistence;
 use App\Data\EmailFilter;
 use App\Domain\Entities\Email;
+use App\Data\EmailSearchTokens;
 
 interface EmailRepository
 {
@@ -12,4 +13,6 @@ interface EmailRepository
      * @return Email[]
      */
     public function list(EmailFilter $filter): array;
+
+    public function saveSearchTokens(EmailSearchTokens $emailTokens): void;
 }
