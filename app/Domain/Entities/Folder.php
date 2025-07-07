@@ -1,38 +1,46 @@
-<?
+<?php
 
 namespace App\Domain\Entities;
+
+use App\Util\UUID;
 
 class Folder
 {
     public function __construct(
-        private int $id,
+        private string $id,
         private string $slug,
         private string $name,
-        private ?string $accont_id = null
+        private ?string $account_id = null
     ) {}
 
     public static function create(
-        int $id,
         string $slug,
-        string $name
+        string $name,
+        ?string $account_id = null,
+        ?string $id = null,
+
     ): Folder {
-        return new self($id, $slug, $name);
+        $id ??= UUID::v7();
+        return new self($id, $slug, $name, $account_id);
     }
 
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getSlug(): string{
+    public function getSlug(): string
+    {
         return $this->slug;
     }
 
-    public function getName(): string{
+    public function getName(): string
+    {
         return $this->name;
     }
 
-    public function getAccountId(): ?string{
-        return $this->accont_id;
+    public function getAccountId(): ?string
+    {
+        return $this->account_id;
     }
 }
