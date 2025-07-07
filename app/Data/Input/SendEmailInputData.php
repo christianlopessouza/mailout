@@ -1,31 +1,24 @@
 <?php
 
-namespace App\Data;
+namespace App\Data\Input;
 
 use App\Domain\Entities\Account;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\Validation\Rule;
 use Spatie\LaravelData\Attributes\Validation\Required;
+
 
 class SendEmailInputData extends Data
 {
     public function __construct(
         public readonly Account $account,
-        public readonly EmailData $email
+        public readonly EmailData $email_data
     ) {}
 }
 
 class EmailData extends Data
 {
     public function __construct(
-        #[Rule(['array', 'nullable', 'each:email'])]
         public array $to,
-
-        #[Rule(['array', 'nullable', 'each:email'])]
-        public array $cc = [],
-
-        #[Rule(['array', 'nullable', 'each:email'])]
-        public array $bcc = [],
 
         #[Required]
         public string $subject,
@@ -33,6 +26,34 @@ class EmailData extends Data
         #[Required]
         public string $body,
 
-        public array $attachments = [],
+        public string $origin,
+
+        public ?string $thread_id,
+
+        public ?array $attachments = [],
+
+        public ?array $cc = [],
+
+        public ?array $bcc = [],
+
+        public ?string $reply_to = null,
+
+        public bool $transactional = false,
+
+        public ?object $complements = null
     ) {}
+
+    public static function rules(): array
+    {
+        return [
+            'to' => ['array', 'required'],
+            'to.*' => ['email'],
+
+            'cc' => ['array', 'nullable'],
+            'cc.*' => ['email'],
+
+            'bcc' => ['array', 'nullable'],
+            'bcc.*' => ['email'],
+        ];
+    }
 }

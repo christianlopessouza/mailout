@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Services;
+namespace App\Infrastructure\Services;
 
-use App\Data\Input\EmailSenderInputData;
+use App\Data\EmailSenderSend;
 
 interface EmailSenderService
 {
@@ -13,5 +13,5 @@ interface EmailSenderService
      * @param mixed $smtpCredentials  // Você pode definir uma interface ou DTO para as credenciais
      * @return bool  Retorna true se o envio for bem-sucedido, false caso contrário.
      */
-    public function send(EmailSenderInputData $params): bool;
+    public function send(EmailSenderSend $params): bool;
 }

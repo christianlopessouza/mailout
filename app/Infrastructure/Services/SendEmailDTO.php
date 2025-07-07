@@ -12,7 +12,7 @@ class SendEmailDTO
     private array $cc;
     private array $bcc;
     private array $attachments;
-    private string $threadId;
+    private string $thread_id;
     private string $status;
 
     public function __construct(
@@ -24,7 +24,7 @@ class SendEmailDTO
         array $cc,
         array $bcc,
         array $attachments,
-        string $threadId
+        string $thread_id
     ) {
         $this->id = $id;
         $this->from = $from;
@@ -34,7 +34,7 @@ class SendEmailDTO
         $this->cc = $cc;
         $this->bcc = $bcc;
         $this->attachments = $attachments;
-        $this->threadId = $threadId;
+        $this->thread_id = $thread_id;
     }
 
     public function getId(): string
@@ -79,6 +79,6 @@ class SendEmailDTO
 
     public function getThreadId(): string
     {
-        return $this->threadId;
+        return $this->thread_id;
     }
 }

@@ -2,64 +2,69 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Data\Input\EmailSenderInputData;
-use App\Domain\Services\EmailSenderService;
+use App\Data\EmailSenderSend;
+use App\Errors\EmailSendFailureError;
+use Exception;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as SymfonyEmail;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class SymfonyEmailSenderService implements EmailSenderService
 {
 
-    public function send(EmailSenderInputData $params): bool
+    public function send(EmailSenderSend $params): bool
     {
         try {
             $email = $params->email;
+            $email_data = $email->getData();
             $credentials = $params->credentials;
 
-            $host = env('MAIL_HOST');
-            $port = env('MAIL_PORT');
-
-            $dsn = strtr('smtp://{address}:{password}@{host}:{port}', [
-                '{address}' => urlencode($credentials->email_address),
-                '{password}' => urlencode($credentials->password),
-                '{host}' => $host,
-                '{port}' => $port
-            ]);
+            $dsn = SymfonyMailerHelper::dsn($credentials);
 
             $transport = Transport::fromDsn($dsn);
             $mailer = new Mailer($transport);
-
             $symfonyEmail = (new SymfonyEmail())
-                ->from($credentials->email_address)
-                ->to(...$email->getTo())
-                ->subject($email->getSubject())
-                ->html($email->getBody());
+                ->from(new Address($credentials->email_address, 'Super Estágios'))
+                ->to(...$email_data->getTo())
+                ->subject($email_data->getSubject())
+                ->text('Super Estágios')
+                ->html($email_data->getBody());
 
-            if (!empty($email->getCc())) {
-                $symfonyEmail->cc(...$email->getCc());
+
+            if (!empty($email_data->getCc())) {
+                $symfonyEmail->cc(...$email_data->getCc());
             }
 
-            if (!empty($email->getBcc())) {
-                $symfonyEmail->bcc(...$email->getBcc());
+            if (!empty($email_data->getBcc())) {
+                $symfonyEmail->bcc(...$email_data->getBcc());
             }
 
-            foreach ($email->getAttachments() as $attachment) {
+            foreach ($email_data->getAttachments() ?? [] as $attachment) {
                 $symfonyEmail->attachFromPath($attachment);
             }
+
+            if ($email_data->getReplyTo()) {
+                $symfonyEmail->replyTo(
+                    $email_data->getReplyTo(),
+                    // 'supervisao@superestagios.com.br'
+                );
+            }
+
 
             $domain = substr(strrchr($credentials->email_address, "@"), 1);
             $message_id = $email->getId() . '@' . $domain;
             $symfonyEmail->getHeaders()->addIdHeader('Message-ID', $message_id);
             if ($email->getThreadId()) {
-                $symfonyEmail->getHeaders()->addIdHeader('In-Reply-To', $email->getThreadId() . '@superestagios.com.br');
+                $symfonyEmail->getHeaders()->addIdHeader('In-Reply-To', $email->getThreadId() . "@" . $domain);
+                $symfonyEmail->getHeaders()->addIdHeader('References', $email->getThreadId() . "@" . $domain);
             }
 
-            $mailer->send($symfonyEmail);
 
+            $mailer->send($symfonyEmail);
             return true;
-        } catch (TransportExceptionInterface $e) {
+        } catch (Exception $e) {
+            echo $e->getMessage();
             return false;
         }
     }
