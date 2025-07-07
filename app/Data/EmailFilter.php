@@ -1,26 +1,36 @@
-<?
+<?php
 
 namespace App\Data;
 
 use App\Domain\Enums\Direction;
+use Spatie\LaravelData\Data;
 
-class EmailFilter
+class EmailFilter extends Data
 {
-    /**
-     * @var string[] $from
-     * @var string[] $to
-     */
-
     public function __construct(
-        public readonly ?Direction $direction = null,
-        public readonly ?bool $read = null,
-        public readonly ?string $folder_id = null,
-        public readonly ?\DateTime $process_start_date = null,
-        public readonly ?\DateTime $process_end_date = null,
-        public readonly ?\DateTime $read_start_date = null,
-        public readonly ?\DateTime $read_end_date = null,
-        public readonly ?string $order = 'descending',
-        public readonly ?array $query_emails = [],
-        public readonly ?array $involved_emails = []
-    ) {}
+        public ?Direction $direction = null,
+        public ?bool $read = null,
+        public ?string $folder_id = null,
+        public ?\DateTime $process_start_date = null,
+        public ?\DateTime $process_end_date = null,
+        public ?\DateTime $read_start_date = null,
+        public ?\DateTime $read_end_date = null,
+        public ?string $order = 'descending',
+        public ?array $query_email_address = null,
+        public ?array $query_email_address_fields = null,
+        public ?array $accounts = null,
+        public ?int $limit_per_page = 30,
+        public ?int $page = 1
+    ) {
+    }
+    public static function rules(): array
+    {
+        return [
+            'accounts' => ['array', 'nullable'],
+            'accounts.*' => ['string'],
+
+            'query_email_address' => ['array', 'nullable'],
+            'query_email_address.*' => ['email'],
+        ];
+    }
 }
