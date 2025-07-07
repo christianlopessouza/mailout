@@ -1,56 +1,63 @@
 <?php
 
-use App\Errors\EmailSendFailureError;
-use App\Helper\Crypto;
-use App\Infrastructure\Services\EmailSenderService;
-use Tests\TestCase;
-use App\UseCases\SendEmail;
-use App\Domain\Entities\Folder;
-use App\Domain\Entities\Account;
-use Illuminate\Support\Facades\DB;
 use App\Data\Input\SendEmailInputData;
+use App\Domain\Entities\Account;
+use App\Domain\Entities\Folder;
+use App\Errors\EmailSendFailureError;
+use App\Infrastructure\Persistence\InMemory\InMemoryAccountRepository;
+use App\Infrastructure\Persistence\InMemory\InMemoryEmailRepository;
+use App\Infrastructure\Persistence\InMemory\InMemoryFolderRepository;
+use App\Infrastructure\Services\EmailSenderService;
+use App\Infrastructure\Services\EmailComplementService;
+use App\UseCases\SendEmail;
+use Tests\TestCase;
 use App\Domain\Enums\Folder as FolderType;
+use App\Infrastructure\Persistence\AccountRepository;
 use App\Infrastructure\Persistence\EmailRepository;
 use App\Infrastructure\Persistence\FolderRepository;
-use App\Infrastructure\Persistence\AccountRepository;
-use App\Infrastructure\Persistence\Facades\FacadesEmailRepository;
-use App\Infrastructure\Persistence\Facades\FacadesFolderRepository;
-use App\Infrastructure\Persistence\Facades\FacadesAccountRepository;
-use App\Infrastructure\Services\SymfonyEmailSenderService;
+use App\Infrastructure\Persistence\EmailComplementRepository;
 use App\Util\UUID;
 
 uses(TestCase::class);
 
-class sendEmailContainer
+class sendEmailContainerInMemory
 {
     public readonly EmailSenderService $emailSenderService;
     public readonly EmailRepository $emailRepository;
+    public readonly EmailComplementService $emailComplementService;
+    public readonly EmailComplementRepository $emailComplementRepository;
     public readonly FolderRepository $folderRepository;
     public readonly AccountRepository $accountRepository;
     public readonly SendEmail $sendEmail;
     public function __construct()
     {
-        $this->emailSenderService = new SymfonyEmailSenderService();
+        $this->emailSenderService = Mockery::mock(EmailSenderService::class);
+        $this->emailSenderService->shouldReceive('send')
+            ->andReturn(true)
+            ->getMock();
 
-        $this->emailRepository = new FacadesEmailRepository();
-        $this->folderRepository = new FacadesFolderRepository();
-        $this->accountRepository = new FacadesAccountRepository();
+        $this->emailComplementService = Mockery::mock(EmailComplementService::class);
+        $this->emailComplementService->shouldReceive('save')
+            ->andReturn(true)
+            ->getMock();
+
+        $this->emailRepository = new InMemoryEmailRepository();
+        $this->folderRepository = new InMemoryFolderRepository();
+        $this->accountRepository = new InMemoryAccountRepository();
         $this->sendEmail = new SendEmail(
             emailSenderService: $this->emailSenderService,
             emailRepository: $this->emailRepository,
-            folderRepository: $this->folderRepository
+            folderRepository: $this->folderRepository,
+            emailComplementService: $this->emailComplementService,
+            emailComplementRepository: $this->emailComplementRepository
         );
     }
 }
 
-describe('Send email', function () {
+describe('InMemory:Send email', function () {
     beforeEach(function () {
-        DB::table('accounts')->delete();
-        DB::table('folders')->delete();
-        DB::table('emails')->delete();
-
-        $container = new sendEmailContainer();
-        $this->account = Account::create('root@gruposuper.com.br', Crypto::encrypt('Xox,s~Z.W{}O'), 'mail.gruposuper.com.br', 587, UUID::v4());
+        $container = new sendEmailContainerInMemory();
+        $this->account = Account::create('mail@example.com', 'password', 'mail.gruposuper.com.br', 587, UUID::v4());
         $container->accountRepository->save($this->account);
 
         $container->folderRepository->save(Folder::create(
@@ -66,11 +73,11 @@ describe('Send email', function () {
         $this->input = SendEmailInputData::validateAndCreate([
             'account' => $this->account,
             'email_data' => [
-                'to' => ['ti.superest@gmail.com'],
-                'cc' => ['cc@gruposuper.com.br'],
-                'bcc' => ['bcc@gruposuper.com.br'],
-                'subject' => 'Poggers ou Noggers',
-                'body' => 'Blelele blublublu aaaaablublublublublublu',
+                'to' => ['destination@gmail.com'],
+                'cc' => ['cc@example.com'],
+                'bcc' => ['bcc@example.com'],
+                'subject' => 'subject',
+                'body' => 'body',
                 'origin' => 'manual',
                 'thread_id' => UUID::v4()
             ]
