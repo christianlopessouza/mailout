@@ -1,32 +1,23 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Master\Controllers\ListEmailsByAccountController;
+use App\Http\Master\Controllers\ListEmailsByClientController;
+use App\Http\Master\Controllers\SendEmailController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\SwitchAccountController;
-use App\Http\Controllers\ListEmailsController;
-use App\Http\Controllers\SendEmailController;
+// Consultas exteriores
+Route::middleware(['auth.public.client'])->prefix('public/client')->group(function () {
+    Route::post('/list-emails', ListEmailsByClientController::class);
+    // Route::post('/emails/batch', [StoreBatchController::class, 'storeBatch']);
+    // Route::get('/emails/batch/send/{amount}', [SendBatchController::class, 'sendBatch']);
+});
 
-use App\Http\Controllers\GetEmailHistoryController;
-use App\Http\Controllers\StoreBatchController;
-use App\Http\Controllers\SendBatchController;
+Route::middleware(['auth.public.account'])->prefix('public/account')->group(function () {
+    Route::post('/send-email', SendEmailController::class);
 
-// Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+    Route::post('/list-emails', ListEmailsByAccountController::class);
+});
 
-// Consultas realizadas pelo Smail
-// Route::middleware(['auth.jwt'])->group(function () {
-//     Route::post('/login', [LoginController::class, 'login']);
-//     Route::get('/account/switch', [SwitchAccountController::class, 'switchAccount']);
-//     Route::get('/emails', [ListEmailsController::class, 'listEmails']);
-//     Route::post('/emails/send', [SendEmailController::class, 'send']);
-// });
-
-// // Consultas exteriores
-// Route::prefix('public')->group(function () {
-//     Route::get('/emails', [GetEmailHistoryController::class, 'getEmailHistory']);
-//     Route::post('/emails/batch', [StoreBatchController::class, 'storeBatch']);
-//     Route::get('/emails/batch/send/{amount}', [SendBatchController::class, 'sendBatch']);
-// });
+Route::get('/ping', function () {
+    return response()->json(['ok' => true]);
+});
