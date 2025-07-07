@@ -25,6 +25,8 @@ services:
       POSTGRES_DB: staging
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports: 
+      - "5432:5432"
   nginx:
     image: nginx:1.25
     container_name: laravel_nginx
