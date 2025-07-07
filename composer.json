@@ -10,11 +10,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "aws/aws-sdk-php": "^3.344",
         "darkaonline/l5-swagger": "^8.6",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "mongodb/laravel-mongodb": "^5.1",
+        "phpmailer/phpmailer": "^6.10",
+        "ramsey/uuid": "^4.7",
         "spatie/laravel-data": "^4.15"
     },
     "require-dev": {
@@ -42,6 +45,7 @@
     },
     "scripts": {
         "test": "vendor/bin/pest",
+        "test:inmemory": "vendor/bin/pest ./tests/Integration/InMemory",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
