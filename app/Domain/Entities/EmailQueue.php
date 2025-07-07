@@ -3,54 +3,99 @@
 namespace App\Domain\Entities;
 
 use App\Domain\EmailVO;
-use App\Domain\Enums\EmailQueueEnum;
+use App\Domain\Enums\EmailStatus;
+use App\Util\UUID;
 
 class EmailQueue
 {
-    private string $id;
-    private EmailVO $emailData;
-    private EmailQueueEnum $queueStatus;
-    private string $createdAt;
-
-    public function __construct(
-        string $id,
-        EmailVO $emailData,
-        EmailQueueEnum $queueStatus,
-        string $createdAt
+    private function __construct(
+        public string $id,
+        public EmailVO $details,
+        public EmailStatus $status,
+        public \DateTime $created_at,
+        public string $batch_id,
+        public ?string $external_id = null,
+        public ?string $email_id = null,
+        public ?string $flag_id = null
     ) {
-        $this->id = $id;
-        $this->emailData = $emailData;
-        $this->queueStatus = $queueStatus;
-        $this->createdAt = $createdAt;
     }
+
+    public static function create(
+        string $from,
+        array $to,
+        string $subject,
+        string $body,
+        string $batch_id,
+        ?string $id = null,
+        ?array $cc = [],
+        ?array $bcc = [],
+        ?array $attachments = [],
+        ?string $external_id = null,
+        ?string $email_id = null,
+        ?string $flag_id = null,
+        ?EmailStatus $status = null,
+        ?\DateTime $created_at = null,
+    ): EmailQueue {
+        $emailVO = new EmailVO(
+            from: $from,
+            to: $to,
+            cc: $cc,
+            bcc: $bcc,
+            subject: $subject,
+            body: $body,
+            attachments: $attachments,
+        );
+
+        return new self(
+            id: $id ?? UUID::v7(),
+            details: $emailVO,
+            status: $status ?? EmailStatus::PENDING,
+            created_at: $created_at ?? new \DateTime(),
+            batch_id: $batch_id,
+            external_id: $external_id,
+            email_id: $email_id,
+            flag_id: $flag_id
+        );
+    }
+
 
     public function getId(): string
     {
         return $this->id;
     }
 
-    public function getEmailData(): EmailVO
+    public function getDetails(): EmailVO
     {
-        return $this->emailData;
+        return $this->details;
     }
 
-    public function getQueueStatus(): EmailQueueEnum
+    public function getStatus(): EmailStatus
     {
-        return $this->queueStatus;
+        return $this->status;
     }
 
-    public function getCreatedAt(): string
+    public function getCreatedAt(): \DateTime
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
     public function changeToSent(): void
     {
-        $this->queueStatus = EmailQueueEnum::SENT;
+        $this->status = EmailStatus::SENT;
     }
 
     public function changeToFailed(): void
     {
-        $this->queueStatus = EmailQueueEnum::FAILED;
+        $this->status = EmailStatus::FAILED;
+    }
+
+    public function getBatchId(): string
+    {
+        return $this->batch_id;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->external_id;
     }
 }
