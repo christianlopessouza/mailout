@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: laravel_app
     ports:
       - "8080:80"
@@ -12,6 +12,10 @@ services:
       - .env
     depends_on:
       - postgres
+    volumes:
+      - .:/var/www
+
+
 
   postgres:
     image: postgres:15
