@@ -2,13 +2,14 @@
 
 namespace App\Infrastructure\Persistence\Facades;
 
+use App\Domain\Entities\EmailComplementTemplate;
 use App\Infrastructure\Persistence\EmailComplementTemplateDTO;
 use App\Infrastructure\Persistence\EmailComplementTemplateRepository;
 use Illuminate\Support\Facades\DB;
 
 class FacadesEmailComplementTemplateRepository implements EmailComplementTemplateRepository
 {
-    public function save(EmailComplementTemplateDTO $email_data): void
+    public function save(EmailComplementTemplate $email_data): void
     {
         $client_id = $email_data->client_id;
         $template = $email_data->data;
@@ -19,7 +20,7 @@ class FacadesEmailComplementTemplateRepository implements EmailComplementTemplat
             ]);
     }
 
-    public function findByClientId(string $client_id): ?EmailComplementTemplateDTO
+    public function findByClientId(string $client_id): ?EmailComplementTemplate
     {
         $data = DB::table('email_complement_templates')
             ->where('client_id', $client_id)

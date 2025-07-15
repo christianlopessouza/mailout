@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Data\Input;
+namespace App\Data;
 
 use App\Domain\Entities\Account;
 use App\Data\EmailData;
 use Spatie\LaravelData\Data;
 
-class SendEmailInputData extends Data
+class SendEmailServiceData extends Data
 {
     public function __construct(
         public readonly Account $account,

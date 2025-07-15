@@ -12,8 +12,7 @@ class EmailSeeder extends Seeder
 {
     public function __construct(
         private EmailRepository $emailRepository
-    ) {
-    }
+    ) {}
     /**
      * Run the database seeds.
      */
@@ -34,7 +33,8 @@ class EmailSeeder extends Seeder
             origin: Origin::MANUAL,
             subject: 'Teste',
             body: '<h1>Corpo do teste</h1>',
-            processed_at: new \DateTime('2025-03-17 10:00:00')
+            processed_at: new \DateTime('2025-03-17 10:00:00'),
+            attachments: false,
         );
 
         $email_list[] = Email::create(
@@ -49,7 +49,9 @@ class EmailSeeder extends Seeder
             thread_id: 'c3f5a5e6-2b4e-425f-8b3f-8c4d3f2f1a3b',
             subject: 'Poggers Noggers',
             body: 'Mensagem auxiliar',
-            processed_at: new \DateTime('2025-05-17 12:00:00')
+            processed_at: new \DateTime('2025-05-17 12:00:00'),
+            attachments: false,
+
         );
 
         $email_list[] = Email::create(
@@ -63,7 +65,9 @@ class EmailSeeder extends Seeder
             thread_id: 'c3f5a5e6-2b4e-425f-8b3f-8c4d3f2f1a3b',
             subject: 'Rexona não te abandona',
             body: 'Take me to the church',
-            processed_at: new \DateTime('2025-03-17 14:20:10')
+            processed_at: new \DateTime('2025-03-17 14:20:10'),
+            attachments: false,
+
         );
 
         foreach ($email_list as $email) {

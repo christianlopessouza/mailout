@@ -2,16 +2,10 @@
 
 namespace App\Infrastructure\Persistence;
 
-use Spatie\LaravelData\Data;
-
-class EmailComplementTemplateDTO extends Data
-{
-    public string $client_id;
-    public object $data;
-}
+use App\Domain\Entities\EmailComplementTemplate;
 
 interface EmailComplementTemplateRepository
 {
-    public function save(EmailComplementTemplateDTO $complements): void;
-    public function findByClientId(string $client_id): ?EmailComplementTemplateDTO;
+    public function save(EmailComplementTemplate $complements): void;
+    public function findByClientId(string $client_id): ?EmailComplementTemplate;
 }

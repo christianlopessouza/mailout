@@ -5,6 +5,7 @@ namespace App\Domain\Entities;
 use App\Domain\EmailVO;
 use App\Domain\Enums\EmailStatus;
 use App\Util\UUID;
+use PhpParser\Node\Expr\Cast\Bool_;
 
 class EmailQueue
 {
@@ -17,8 +18,7 @@ class EmailQueue
         public ?string $external_id = null,
         public ?string $email_id = null,
         public ?string $flag_id = null
-    ) {
-    }
+    ) {}
 
     public static function create(
         string $from,
@@ -26,10 +26,10 @@ class EmailQueue
         string $subject,
         string $body,
         string $batch_id,
+        bool $attachments,
         ?string $id = null,
         ?array $cc = [],
         ?array $bcc = [],
-        ?array $attachments = [],
         ?string $external_id = null,
         ?string $email_id = null,
         ?string $flag_id = null,

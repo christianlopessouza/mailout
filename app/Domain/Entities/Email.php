@@ -33,7 +33,7 @@ class Email
         string $body,
         Direction $direction,
         string $folder_id,
-        ?array $attachments = null,
+        bool $attachments,
         ?array $cc = null,
         ?array $bcc = null,
         ?Origin $origin = null,
@@ -103,6 +103,7 @@ class Email
             return;
 
         $this->failed = true;
+        $this->deleted = true;
     }
 
     public function getId(): string
@@ -175,5 +176,4 @@ class Email
     {
         return $this->failed;
     }
-
 }

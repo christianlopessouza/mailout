@@ -3,7 +3,6 @@
 namespace App\Infrastructure\Services;
 
 use App\Data\EmailSenderSend;
-use App\Errors\EmailSendFailureError;
 use Exception;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
@@ -12,13 +11,16 @@ use Symfony\Component\Mime\Email as SymfonyEmail;
 
 class SymfonyEmailSenderService implements EmailSenderService
 {
-
+    public function __construct(
+        private readonly AttachmentService $attachmentService,
+    ) {}
     public function send(EmailSenderSend $params): bool
     {
         try {
             $email = $params->email;
             $email_data = $email->getData();
             $credentials = $params->credentials;
+            $attachments = $params->attachments;
 
             $dsn = SymfonyMailerHelper::dsn($credentials);
 
@@ -40,17 +42,22 @@ class SymfonyEmailSenderService implements EmailSenderService
                 $symfonyEmail->bcc(...$email_data->getBcc());
             }
 
-            foreach ($email_data->getAttachments() ?? [] as $attachment) {
-                $symfonyEmail->attachFromPath($attachment);
-            }
-
             if ($email_data->getReplyTo()) {
                 $symfonyEmail->replyTo(
                     $email_data->getReplyTo(),
-                    // 'supervisao@superestagios.com.br'
                 );
             }
 
+            if ($attachments) {
+                foreach ($attachments as $attachment) {
+                    $attachment_path = $this->attachmentService->get($attachment);
+                    $symfonyEmail->attachFromPath(
+                        $attachment_path,
+                        $attachment->getFilename(),
+                        $attachment->getMimeType()
+                    );
+                }
+            }
 
             $domain = substr(strrchr($credentials->email_address, "@"), 1);
             $message_id = $email->getId() . '@' . $domain;
@@ -59,8 +66,6 @@ class SymfonyEmailSenderService implements EmailSenderService
                 $symfonyEmail->getHeaders()->addIdHeader('In-Reply-To', $email->getThreadId() . "@" . $domain);
                 $symfonyEmail->getHeaders()->addIdHeader('References', $email->getThreadId() . "@" . $domain);
             }
-
-
             $mailer->send($symfonyEmail);
             return true;
         } catch (Exception $e) {

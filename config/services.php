@@ -34,5 +34,15 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+
+    's3' => [
+        'version' => 'latest',
+        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+        'credentials' => [
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        ],
+    ],
+
     'smail_api_url' => env('SMAIL_API_URL', 'https://sua-api-default.com/api'),
 ];

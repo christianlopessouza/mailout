@@ -10,7 +10,7 @@ class EmailVO
     private ?array $bcc;
     private string $subject;
     private string $body;
-    private ?array $attachments;
+    private bool $attachments;
     private ?string $reply_to;
 
     public function __construct(
@@ -18,9 +18,9 @@ class EmailVO
         array $to,
         string $subject,
         string $body,
+        bool $attachments,
         ?array $cc = [],
         ?array $bcc = [],
-        ?array $attachments = [],
         ?string $reply_to = null
     ) {
         $this->from = $from;
@@ -69,7 +69,7 @@ class EmailVO
         return $this->reply_to;
     }
 
-    public function getAttachments(): ?array
+    public function getAttachments(): bool
     {
         return $this->attachments;
     }
