@@ -29,6 +29,10 @@ EXPOSE 80
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY docker/db-migrate.sh /usr/local/bin/db-migrate.sh
 
+RUN apt-get update && apt-get install -y dos2unix \
+  && dos2unix /usr/local/bin/*.sh \
+  && chmod +x /usr/local/bin/*.sh
+
 RUN chmod +x /usr/local/bin/db-migrate.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 

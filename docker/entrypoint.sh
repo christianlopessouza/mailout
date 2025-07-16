@@ -1,5 +1,9 @@
 #!/bin/bash
+echo "Caching config..."
+php artisan config:clear
+php artisan config:cache
 
+echo "Laravel log config..."
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
