@@ -27,6 +27,9 @@ RUN composer install --optimize-autoloader --no-dev \
 EXPOSE 80
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/db-migrate.sh /usr/local/bin/db-migrate.sh
+
+RUN chmod +x /usr/local/bin/db-migrate.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
