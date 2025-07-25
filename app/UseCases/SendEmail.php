@@ -2,19 +2,9 @@
 
 namespace App\UseCases;
 
-use App\Data\EmailSenderSend;
 use App\Data\Output\SendEmailOutputData;
 use App\Data\Input\SendEmailInputData;
 use App\Data\SendEmailServiceData;
-use App\Domain\Entities\Attachment;
-use App\Domain\Entities\Email;
-use App\Domain\Enums\AttachmentStatus;
-use App\Domain\Enums\Direction;
-use App\Domain\Enums\Folder;
-use App\Domain\Enums\Origin;
-use App\Errors\EmailSendFailureError;
-use App\Errors\FolderNotFoundError;
-use App\Infrastructure\Persistence\EmailComplementDTO;
 use App\Infrastructure\Persistence\EmailComplementRepository;
 use App\Infrastructure\Persistence\EmailRepository;
 use App\Infrastructure\Persistence\FolderRepository;

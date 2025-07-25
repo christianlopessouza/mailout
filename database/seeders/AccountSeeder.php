@@ -6,6 +6,7 @@ use App\Domain\Entities\Account;
 use App\Helper\Crypto;
 use App\Infrastructure\Persistence\AccountRepository;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AccountSeeder extends Seeder
 {
@@ -17,6 +18,8 @@ class AccountSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('accounts')->delete();
+
         $account_list = [];
 
         $account_list[] = Account::create(

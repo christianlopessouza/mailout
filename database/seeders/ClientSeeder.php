@@ -6,6 +6,7 @@ use App\Domain\Entities\Client;
 use App\Infrastructure\Persistence\ClientRepository;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ClientSeeder extends Seeder
 {
@@ -17,6 +18,7 @@ class ClientSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('clients')->delete();
         $client_list = [];
 
         $client_list[] = Client::create(
