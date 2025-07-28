@@ -18,6 +18,10 @@ COPY . .
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
+# Ajustar limites de upload do PHP
+RUN echo "upload_max_filesize = 50M" > /usr/local/etc/php/conf.d/uploads.ini \
+ && echo "post_max_size = 55M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Configure NGINX
 COPY docker/nginx/nginx.conf /etc/nginx/sites-available/default
 RUN rm /etc/nginx/sites-enabled/default && \
@@ -37,7 +41,6 @@ RUN composer install --optimize-autoloader --no-dev \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
-
 
 # Expose port
 EXPOSE 80
