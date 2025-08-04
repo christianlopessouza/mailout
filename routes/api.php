@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\FilterEmailsByClientController;
-use App\Http\Master\Controllers\FilterEmailsByAccounController;
+use App\Http\Master\Controllers\FilterEmailsByClientController;
+use App\Http\Master\Controllers\FilterEmailsByAccountController;
 use App\Http\Master\Controllers\SendEmailByClientController;
 use App\Http\Master\Controllers\SendEmailController;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +18,7 @@ Route::middleware(['auth.public.client'])->prefix('public/client')->group(functi
 Route::middleware(['auth.public.account'])->prefix('public/account')->group(function () {
     Route::post('/send-email', SendEmailController::class);
 
-    Route::get('/list-emails', FilterEmailsByAccounController::class);
+    Route::get('/list-emails', FilterEmailsByAccountController::class);
 });
 
 Route::get('/ping', function () {

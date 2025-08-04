@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Master\Controllers;
 
 use App\Data\EmailFilterData;
 use App\Data\Input\FilterEmailsByClientInputData;
