@@ -62,7 +62,7 @@ class Email
             if ($read_at !== null)
                 throw new \InvalidArgumentException('Outgoing emails cannot have a read timestamp.');
 
-            if ($read !== null)
+            if ($read !== false && $read !== null)
                 throw new \InvalidArgumentException('Outgoing emails must not define a read flag.');
 
             if ($origin === null)
@@ -85,7 +85,7 @@ class Email
             account_id: $account_id,
             data: $email_data,
             direction: $direction,
-            read: $read,
+            read: $read ?? false,
             folder_id: $folder_id,
             thread_id: $thread_id ?? UUID::v4(),
             processed_at: $processed_at ?? new \DateTime(),
