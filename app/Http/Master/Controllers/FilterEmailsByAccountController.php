@@ -10,7 +10,7 @@ use App\UseCases\FilterEmailsByAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class FilterEmailsByAccounController implements Controller
+class FilterEmailsByAccountController implements Controller
 {
     public function __construct(
         private readonly FilterEmailsByAccount $filterEmailsByAccount
