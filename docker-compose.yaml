@@ -5,11 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: laravel_app
+    container_name: smail_laravel_app
     ports:
       - "8080:80"
     env_file:
-      - .env
+      - docker/.env.docker
     depends_on:
       - postgres
     volumes:
@@ -19,7 +19,7 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: postgres_db
+    container_name: smail_postgres_db
     restart: always
     environment:
       POSTGRES_USER: user

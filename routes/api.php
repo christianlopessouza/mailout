@@ -24,3 +24,6 @@ Route::middleware(['auth.public.account'])->prefix('public/account')->group(func
 Route::get('/ping', function () {
     return response()->json(['ok' => true]);
 });
+
+Route::post('/email-complement/save', \App\Http\Master\Controllers\SaveEmailComplementController::class);
+    

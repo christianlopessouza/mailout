@@ -15,11 +15,6 @@ use App\UseCases\Services\SendEmailService;
 class SendEmail
 {
     public function __construct(
-        public readonly EmailSenderService $emailSenderService,
-        public readonly EmailRepository $emailRepository,
-        public readonly FolderRepository $folderRepository,
-        public readonly EmailComplementService $emailComplementService,
-        private readonly EmailComplementRepository $emailComplementRepository,
         private readonly SendEmailService $sendEmailService,
     ) {}
 

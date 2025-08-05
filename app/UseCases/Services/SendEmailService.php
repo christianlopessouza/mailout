@@ -21,6 +21,7 @@ use App\Infrastructure\Persistence\FolderRepository;
 use App\Infrastructure\Services\AttachmentService;
 use App\Infrastructure\Services\EmailComplementService;
 use App\Infrastructure\Services\EmailSenderService;
+use App\Infrastructure\Persistence\EmailComplementTemplateRepository;
 
 class SendEmailService
 {
@@ -32,6 +33,7 @@ class SendEmailService
         private readonly EmailComplementRepository $emailComplementRepository,
         private readonly AttachmentService $attachmentService,
         private readonly AttachmentRepository $attachmentRepository,
+        private readonly EmailComplementTemplateRepository $emailComplementTemplateRepository,
     ) {}
 
     public function execute(SendEmailServiceData $data): SendEmailServiceResponseData
@@ -87,7 +89,7 @@ class SendEmailService
 
         if ($email_input->complements) {
             $resolved_complements = $this->emailComplementService->applyTemplateAndSave(
-                complements: $email_input->complements,
+                complements: $email_input->complements, 
                 account_id: $account->getId()
             );
         }
