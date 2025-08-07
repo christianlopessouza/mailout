@@ -16,7 +16,7 @@ class FacadesEmailRepository implements EmailRepository
 {
     private function map(object $data): Email
     {
-        return Email::create(
+        $email = Email::create(
             id: $data->id,
             account_id: $data->account_id,
             from: $data->from,
@@ -38,6 +38,8 @@ class FacadesEmailRepository implements EmailRepository
             failed: $data->failed,
             reply_to: $data->reply_to
         );
+
+        return $email;
     }
 
     public function save(Email $email): void
@@ -161,7 +163,9 @@ class FacadesEmailRepository implements EmailRepository
         $query = DB::table('emails', 'e')
             ->select('e.*')
             ->join('email_search_tokens as est', 'e.id', '=', 'est.email_id')
-            ->where('e.account_id', $accountId);
+            ->where('e.account_id', $accountId)
+            ->limit($paginationData->perPage)
+            ->offset(($paginationData->page - 1) * $paginationData->perPage);
 
 
         foreach($filters as [$filter, $value]) {
@@ -170,30 +174,26 @@ class FacadesEmailRepository implements EmailRepository
 
         $query->distinct();
 
-        $emails = $query->paginate(
-            perPage: $paginationData->perPage,
-            columns: ['*'],
-            page: $paginationData->page
-        );
+        $emails = $query->get();
+        $total = count($emails);
 
         if ($emails->isEmpty()) {
             return PaginatedEmailsData::validateAndCreate([
                 'items' => [],
                 'total' => 0,
-                'currentPage' => $emails->currentPage(),
-                'perPage' => $emails->perPage()
+                'currentPage' => $paginationData->page,
+                'perPage' => $paginationData->perPage
             ]);
         }
 
-        $mapped_emails = $emails->getCollection()
-            ->map(fn ($email) => $this->map($email))
+        $mapped_emails = $emails->map(fn ($email) => $this->map($email))
             ->all();
 
         return PaginatedEmailsData::validateAndCreate([
             'items' => $mapped_emails,
-            'total' => $emails->total(),
-            'currentPage' => $emails->currentPage(),
-            'perPage' => $emails->perPage()
+            'total' => $total,
+            'currentPage' => $paginationData->page,
+            'perPage' => $paginationData->perPage
         ]);
     }
 

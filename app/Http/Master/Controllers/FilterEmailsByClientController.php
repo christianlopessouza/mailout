@@ -40,12 +40,19 @@ class FilterEmailsByClientController implements Controller
 
             $input = FilterEmailsByClientInputData::validateAndCreate([
                 'client' => $client,
-                'filter' => $filterData
+                'filter' => $filterData->toArray()
             ]);
 
+            $result = $this->filterEmailsByClient->execute($input);
+
+            $emails = array_map(function($email) {
+                return $email->toArray();
+            }, $result->emails);
+
             return response()->json([
-                'message' => 'This controller is not implemented yet.'
-            ], 501);
+                'emails' => $emails,
+                'total' => $result->total
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()

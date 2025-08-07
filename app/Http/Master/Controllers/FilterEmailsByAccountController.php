@@ -41,13 +41,17 @@ class FilterEmailsByAccountController implements Controller
             
             $input = FilterEmailsByAccountInputData::validateAndCreate([
                 'account' => $account,
-                'filter' => $filterData
+                'filter' => $filterData->toArray()
             ]);
 
             $result = $this->filterEmailsByAccount->execute($input);
 
+            $emails = array_map(function($email) {
+                return $email->toArray();
+            }, $result->emails);
+
             return response()->json([
-                'emails' => $result->emails,
+                'emails' => $emails,
                 'total' => $result->total
             ], 200);
         } catch (\Exception $e) {
