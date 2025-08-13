@@ -64,6 +64,8 @@ class SendEmailService
             thread_id: $email_input->thread_id
         );
 
+        $this->emailRepository->save($email);
+
         if ($has_attachments) {
             foreach ($email_input->attachments as $attachment_input) {
                 $attachments[] = $attachment = Attachment::create(
@@ -94,7 +96,6 @@ class SendEmailService
             );
         }
 
-        $this->emailRepository->save($email);
         if ($resolved_complements) {
             $email_complements = EmailComplementDTO::validateAndCreate([
                 'complements' => $resolved_complements,
@@ -114,8 +115,6 @@ class SendEmailService
                 'username' => $account->getUsername()
             ]
         ]);
-
-
 
         $sent_successfuly = $this->emailSenderService->send($sender_params);
         if (!$sent_successfuly) {
