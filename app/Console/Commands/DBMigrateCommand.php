@@ -166,13 +166,13 @@ class DBMigrateCommand extends Command
                     body: $email->texto,
                     direction: $direction,
                     folder_id: $folder,
-                    thread_id: UUID::v4(),
                     read: $lido,
                     read_at: $data_lido,
                     deleted: $deleted,
                     processed_at: new DateTime($email->data_email),
                     origin: $origin,
-                    external_id: $email->id
+                    external_id: $email->id,
+                    attachments: false
                 );
                 $emailRepository->save($email_smail);
 
