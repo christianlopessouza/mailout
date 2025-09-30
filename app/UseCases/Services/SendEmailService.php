@@ -21,6 +21,7 @@ use App\Infrastructure\Persistence\FolderRepository;
 use App\Infrastructure\Services\AttachmentService;
 use App\Infrastructure\Services\EmailComplementService;
 use App\Infrastructure\Services\EmailSenderService;
+use App\Infrastructure\Persistence\EmailComplementTemplateRepository;
 
 class SendEmailService
 {
@@ -32,6 +33,7 @@ class SendEmailService
         private readonly EmailComplementRepository $emailComplementRepository,
         private readonly AttachmentService $attachmentService,
         private readonly AttachmentRepository $attachmentRepository,
+        private readonly EmailComplementTemplateRepository $emailComplementTemplateRepository,
     ) {}
 
     public function execute(SendEmailServiceData $data): SendEmailServiceResponseData
@@ -59,8 +61,11 @@ class SendEmailService
             folder_id: $folder->getId(),
             attachments: $has_attachments,
             reply_to: $email_input->reply_to,
-            thread_id: $email_input->thread_id
+            thread_id: $email_input->thread_id,
+            external_id: $email_input->external_id ?? null,
         );
+
+        $this->emailRepository->save($email);
 
         if ($has_attachments) {
             foreach ($email_input->attachments as $attachment_input) {
@@ -92,7 +97,6 @@ class SendEmailService
             );
         }
 
-        $this->emailRepository->save($email);
         if ($resolved_complements) {
             $email_complements = EmailComplementDTO::validateAndCreate([
                 'complements' => $resolved_complements,
@@ -105,15 +109,13 @@ class SendEmailService
             'email' => $email,
             'attachments' => $attachments,
             'credentials' => [
-                'email_address' => $account->getEmailAddress(),
                 'password' => $account->getPassword(),
                 'host' => $account->getHost(),
                 'port' => $account->getPort(),
-                'username' => $account->getUsername()
+                'username' => $account->getUsername(),
+                'email_address' => $account->getEmailAddress()
             ]
         ]);
-
-
 
         $sent_successfuly = $this->emailSenderService->send($sender_params);
         if (!$sent_successfuly) {
@@ -121,7 +123,7 @@ class SendEmailService
             $this->emailRepository->save($email);
             throw new EmailSendFailureError();
         }
-        
+
         $response = new SendEmailServiceResponseData(
             email: $email
         );

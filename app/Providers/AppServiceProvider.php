@@ -22,6 +22,9 @@ use App\Infrastructure\Services\EmailSenderService;
 use App\Infrastructure\Services\S3AttachmentService;
 use App\Infrastructure\Services\SymfonyEmailAuthenticationService;
 use App\Infrastructure\Services\SymfonyEmailSenderService;
+use App\UseCases\FilterEmailsByAccount;
+use App\UseCases\FilterEmailsByClient;
+use App\UseCases\Services\EmailFiltersService;
 use Aws\S3\S3Client;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
@@ -48,6 +51,11 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(AttachmentRepository::class, FacadesAttachmentRepository::class);
         $this->app->bind(EmailAuthenticationService::class, SymfonyEmailAuthenticationService::class);
+        $this->app->bind(FilterEmailsByAccount::class, FilterEmailsByAccount::class);
+        $this->app->bind(FilterEmailsByClient::class, FilterEmailsByClient::class);
+        $this->app->bind(EmailFiltersService::class, function ($app) {
+            return new EmailFiltersService($app->tagged('email.filters'));
+        });
     }
 
     /**

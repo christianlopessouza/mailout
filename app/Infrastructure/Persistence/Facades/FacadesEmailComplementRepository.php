@@ -10,11 +10,12 @@ class FacadesEmailComplementRepository implements EmailComplementRepository
 {
     public function save(EmailComplementDTO $data): void
     {
-        $email_id = $data->email_id;
-        $complement_data = json_encode($data->complement);
+        $now = new \DateTime();
         DB::table('email_complements')->insert([
-            'email_id' => $email_id,
-            'template_data' => json_encode($complement_data),
+            'email_id'      => $data->email_id,
+            'complement_data' => json_encode($data->complement_data),
+            'created_at'    => $now,
+            'updated_at'    => $now,
         ]);
     }
 }

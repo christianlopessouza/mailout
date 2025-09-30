@@ -2,7 +2,10 @@
 
 namespace App\Domain\Entities;
 
+use App\Domain\Enums\AccountType;
 use App\Util\UUID;
+
+
 
 class Account
 {
@@ -13,6 +16,8 @@ class Account
         private int $port,
         private string $token,
         private string $password,
+        private bool $active,
+        private AccountType $type,
         private ?string $username
     ) {}
 
@@ -21,6 +26,8 @@ class Account
         string $password,
         string $host,
         int $port,
+        AccountType $type,
+        ?bool $active = null,
         ?string $token = null,
         ?string $id = null,
         ?string $username = null
@@ -34,11 +41,13 @@ class Account
         return new self(
             id: $id,
             email_address: $email_address,
+            password: $password,
             host: $host,
             port: $port,
             token: $token,
-            password: $password,
-            username: $username
+            username: $username,
+            type: $type,
+            active: $active ?? true
         );
     }
 
@@ -55,7 +64,7 @@ class Account
 
     public function getUsername(): ?string
     {
-        return $this->username;
+        return $this->username ?? $this->email_address;
     }
 
 
@@ -77,5 +86,13 @@ class Account
     public function getToken(): string
     {
         return $this->token;
+    }
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+    public function getType(): AccountType
+    {
+        return $this->type;
     }
 }

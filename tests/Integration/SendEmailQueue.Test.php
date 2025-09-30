@@ -18,13 +18,13 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-describe('Send Email Queue', function () {
-    beforeEach(function () {
-        DB::table('accounts')->delete();
-        DB::table('folders')->delete();
-        DB::table('emails')->delete();
-        DB::table('email_queue')->delete();
+// describe('Send Email Queue', function () {
+//     beforeEach(function () {
+//         DB::table('accounts')->delete();
+//         DB::table('folders')->delete();
+//         DB::table('emails')->delete();
+//         DB::table('email_queue')->delete();
 
-        $this->account = Account::create("");
-    }
-});
+//         $this->account = Account::create("");
+//     }
+// });

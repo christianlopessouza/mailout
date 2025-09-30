@@ -9,7 +9,7 @@ class EmailComplementTemplate
     public function __construct(
         public string $id,
         public string $client_id,
-        public \stdClass $template
+        public \stdClass $template,
     ) {}
 
     public static function create(
@@ -20,7 +20,7 @@ class EmailComplementTemplate
         return new self(
             id: $id ?? UUID::v7(),
             client_id: $client_id,
-            template: $template
+            template: $template,
         );
     }
 

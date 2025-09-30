@@ -6,6 +6,7 @@ use App\Data\Input\EmailAuthenticationInputData;
 use App\Data\Input\RegisterInputData;
 use App\Data\Output\RegisterOutputData;
 use App\Domain\Entities\Account;
+use App\Domain\Enums\AccountType;
 use App\Errors\AccountAlreadyRegisteredError;
 use App\Errors\InvalidAuthError;
 use App\Errors\PasswordDoesntMatchError;
@@ -72,6 +73,7 @@ class Register
             password: $password,
             host: $host,
             port: $port,
+            type: AccountType::SENDER,
             token: UUID::v4(),
         );
 

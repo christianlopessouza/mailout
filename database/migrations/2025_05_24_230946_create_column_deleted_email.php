@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('emails', function (Blueprint $table) {
-            $table->boolean('deleted')->nullable();
+            $table->boolean('deleted')->default('default')->nullable();
         });
     }
 

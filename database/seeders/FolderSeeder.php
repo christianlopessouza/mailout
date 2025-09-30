@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Domain\Entities\Folder;
 use App\Infrastructure\Persistence\FolderRepository;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class FolderSeeder extends Seeder
 {
@@ -16,6 +17,8 @@ class FolderSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('folders')->delete();
+
         $folder_list = [];
 
         $folder_list[] = Folder::create(

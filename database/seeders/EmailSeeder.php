@@ -7,6 +7,7 @@ use App\Domain\Enums\Direction;
 use App\Domain\Enums\Origin;
 use App\Infrastructure\Persistence\EmailRepository;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class EmailSeeder extends Seeder
 {
@@ -18,6 +19,13 @@ class EmailSeeder extends Seeder
      */
     public function run(): void
     {
+
+        DB::table('emails')->delete();
+        DB::table('email_complements')->delete();
+        DB::table('attachments')->delete();
+        DB::table('email_search_tokens')->delete();
+
+
         $email_list = [];
 
         $email_list[] = Email::create(
