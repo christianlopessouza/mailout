@@ -34,6 +34,8 @@ class EmailData extends Data
         public bool $transactional = false,
 
         public ?object $complements = null,
+
+        public ?string $external_id = null
     ) {}
 
     public static function rules(): array

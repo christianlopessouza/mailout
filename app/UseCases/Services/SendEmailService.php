@@ -61,7 +61,8 @@ class SendEmailService
             folder_id: $folder->getId(),
             attachments: $has_attachments,
             reply_to: $email_input->reply_to,
-            thread_id: $email_input->thread_id
+            thread_id: $email_input->thread_id,
+            external_id: $email_input->external_id ?? null,
         );
 
         $this->emailRepository->save($email);
