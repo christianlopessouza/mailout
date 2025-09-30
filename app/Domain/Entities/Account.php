@@ -9,20 +9,19 @@ class Account
     private function __construct(
         private string $id,
         private string $email_address,
-        private string $password,
         private string $host,
         private int $port,
         private string $token,
+        private string $password,
         private ?string $username
-    ) {
-    }
+    ) {}
 
     public static function create(
         string $email_address,
         string $password,
         string $host,
         int $port,
-        ?string $token,
+        ?string $token = null,
         ?string $id = null,
         ?string $username = null
     ): Account {
@@ -33,13 +32,13 @@ class Account
         $token ??= UUID::v4();
 
         return new self(
-            $id,
-            $email_address,
-            $password,
-            $host,
-            $port,
-            $token,
-            $username
+            id: $id,
+            email_address: $email_address,
+            host: $host,
+            port: $port,
+            token: $token,
+            password: $password,
+            username: $username
         );
     }
 

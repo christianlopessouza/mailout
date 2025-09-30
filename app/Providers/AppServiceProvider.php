@@ -17,8 +17,10 @@ use App\Infrastructure\Persistence\Facades\FacadesEmailRepository;
 use App\Infrastructure\Persistence\Facades\FacadesFolderRepository;
 use App\Infrastructure\Persistence\FolderRepository;
 use App\Infrastructure\Services\AttachmentService;
+use App\Infrastructure\Services\EmailAuthenticationService;
 use App\Infrastructure\Services\EmailSenderService;
 use App\Infrastructure\Services\S3AttachmentService;
+use App\Infrastructure\Services\SymfonyEmailAuthenticationService;
 use App\Infrastructure\Services\SymfonyEmailSenderService;
 use Aws\S3\S3Client;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -45,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
             return new S3AttachmentService($s3Client);
         });
         $this->app->bind(AttachmentRepository::class, FacadesAttachmentRepository::class);
+        $this->app->bind(EmailAuthenticationService::class, SymfonyEmailAuthenticationService::class);
     }
 
     /**

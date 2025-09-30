@@ -19,6 +19,5 @@ class Credentials extends Data
         public readonly int $port,
 
         public readonly ?string $username
-    ) {
-    }
+    ) {}
 }
