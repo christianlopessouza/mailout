@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Master\Controllers\ListEmailsByAccountController;
+use App\Http\Master\Controllers\ListEmailsByClientController;
+use App\Http\Master\Controllers\RegisterAccountController;
 use App\Http\Master\Controllers\FilterEmailsByClientController;
 use App\Http\Master\Controllers\FilterEmailsByAccountController;
 use App\Http\Master\Controllers\SendEmailByClientController;
@@ -8,9 +11,9 @@ use Illuminate\Support\Facades\Route;
 
 // Consultas exteriores
 Route::middleware(['auth.public.client'])->prefix('public/client')->group(function () {
+    Route::post('/registerAccount', RegisterAccountController::class);
     Route::get('/list-emails', FilterEmailsByClientController::class);
     Route::post('/send-email', SendEmailByClientController::class);
-
     // Route::post('/emails/batch', [StoreBatchController::class, 'storeBatch']);
     // Route::get('/emails/batch/send/{amount}', [SendBatchController::class, 'sendBatch']);
 });

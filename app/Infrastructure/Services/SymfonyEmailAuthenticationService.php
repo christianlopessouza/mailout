@@ -2,15 +2,14 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Data\Input\EmailAuthenticationInputData;
-use App\Helper\Crypto;
+use App\Data\EmailAuthentication;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\Smtp\SmtpTransport;
 
 class SymfonyEmailAuthenticationService implements EmailAuthenticationService
 {
-    public function authenticate(EmailAuthenticationInputData $params): bool
+    public function authenticate(EmailAuthentication $params): bool
     {
         try {
             $credentials = $params->credentials;

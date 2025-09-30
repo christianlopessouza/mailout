@@ -12,10 +12,10 @@ class Account
     private function __construct(
         private string $id,
         private string $email_address,
-        private string $password,
         private string $host,
         private int $port,
         private string $token,
+        private string $password,
         private bool $active,
         private AccountType $type,
         private ?string $username

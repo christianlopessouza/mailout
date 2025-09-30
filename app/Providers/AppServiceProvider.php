@@ -17,8 +17,10 @@ use App\Infrastructure\Persistence\Facades\FacadesEmailRepository;
 use App\Infrastructure\Persistence\Facades\FacadesFolderRepository;
 use App\Infrastructure\Persistence\FolderRepository;
 use App\Infrastructure\Services\AttachmentService;
+use App\Infrastructure\Services\EmailAuthenticationService;
 use App\Infrastructure\Services\EmailSenderService;
 use App\Infrastructure\Services\S3AttachmentService;
+use App\Infrastructure\Services\SymfonyEmailAuthenticationService;
 use App\Infrastructure\Services\SymfonyEmailSenderService;
 use App\UseCases\FilterEmailsByAccount;
 use App\UseCases\FilterEmailsByClient;
@@ -48,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
             return new S3AttachmentService($s3Client);
         });
         $this->app->bind(AttachmentRepository::class, FacadesAttachmentRepository::class);
+        $this->app->bind(EmailAuthenticationService::class, SymfonyEmailAuthenticationService::class);
         $this->app->bind(FilterEmailsByAccount::class, FilterEmailsByAccount::class);
         $this->app->bind(FilterEmailsByClient::class, FilterEmailsByClient::class);
         $this->app->bind(EmailFiltersService::class, function ($app) {
