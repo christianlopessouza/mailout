@@ -47,6 +47,7 @@ class SendEmailByClientController
                     'complements' => $request->input('complement'),
                     'reply_to' => $request->input('reply_to'),
                     'thread_id' => $request->input('thread_id'),
+                    'external_id' => $request->input('external_id'),
                 ]
             ]);
 

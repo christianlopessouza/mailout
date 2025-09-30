@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Persistence\Facades;
 
 use App\Domain\Entities\Account;
+use App\Domain\Enums\AccountType;
 use App\Infrastructure\Persistence\AccountRepository;
 use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\Regex;
@@ -16,6 +17,7 @@ class FacadesAccountRepository implements AccountRepository
             password: $data->password,
             host: $data->host,
             port: $data->port,
+            type: AccountType::from($data->type),
             id: $data->id,
             token: $data->token,
             username: $data->username
@@ -34,6 +36,7 @@ class FacadesAccountRepository implements AccountRepository
                 'password' => $account->getPassword(),
                 'host' => $account->getHost(),
                 'port' => $account->getPort(),
+                'type' => $account->getType(),
                 'token' => $account->getToken(),
                 'created_at' => $now,
                 'updated_at' => $now,

@@ -21,6 +21,10 @@ class EmailSeeder extends Seeder
     {
 
         DB::table('emails')->delete();
+        DB::table('email_complements')->delete();
+        DB::table('attachments')->delete();
+        DB::table('email_search_tokens')->delete();
+
 
         $email_list = [];
 

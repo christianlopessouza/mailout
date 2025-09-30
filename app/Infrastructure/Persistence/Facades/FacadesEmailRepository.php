@@ -164,6 +164,9 @@ class FacadesEmailRepository implements EmailRepository
             if (is_null($value) || (is_string($value) && trim($value) === '')) {
                 continue;
             }
+            if ($type === 'body') {
+                $value = preg_replace('/\s+/', ' ', trim(strip_tags($value)));
+            }
 
             if (!is_array($value)) {
                 $this->saveToken($email_tokens->email_id, $type, $value);

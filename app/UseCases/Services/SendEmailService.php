@@ -61,7 +61,8 @@ class SendEmailService
             folder_id: $folder->getId(),
             attachments: $has_attachments,
             reply_to: $email_input->reply_to,
-            thread_id: $email_input->thread_id
+            thread_id: $email_input->thread_id,
+            external_id: $email_input->external_id ?? null,
         );
 
         $this->emailRepository->save($email);
@@ -91,7 +92,7 @@ class SendEmailService
 
         if ($email_input->complements) {
             $resolved_complements = $this->emailComplementService->applyTemplateAndSave(
-                complements: $email_input->complements, 
+                complements: $email_input->complements,
                 account_id: $account->getId()
             );
         }
@@ -108,11 +109,11 @@ class SendEmailService
             'email' => $email,
             'attachments' => $attachments,
             'credentials' => [
-                'email_address' => $account->getEmailAddress(),
                 'password' => $account->getPassword(),
                 'host' => $account->getHost(),
                 'port' => $account->getPort(),
-                'username' => $account->getUsername()
+                'username' => $account->getUsername(),
+                'email_address' => $account->getEmailAddress()
             ]
         ]);
 
@@ -122,7 +123,7 @@ class SendEmailService
             $this->emailRepository->save($email);
             throw new EmailSendFailureError();
         }
-        
+
         $response = new SendEmailServiceResponseData(
             email: $email
         );
