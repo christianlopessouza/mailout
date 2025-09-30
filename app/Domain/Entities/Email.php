@@ -62,7 +62,7 @@ class Email
             if ($read_at !== null)
                 throw new \InvalidArgumentException('Outgoing emails cannot have a read timestamp.');
 
-            if ($read !== null)
+            if ($read !== false && $read !== null)
                 throw new \InvalidArgumentException('Outgoing emails must not define a read flag.');
 
             if ($origin === null)
@@ -85,7 +85,7 @@ class Email
             account_id: $account_id,
             data: $email_data,
             direction: $direction,
-            read: $read,
+            read: $read ?? false,
             folder_id: $folder_id,
             thread_id: $thread_id ?? UUID::v4(),
             processed_at: $processed_at ?? new \DateTime(),
@@ -175,5 +175,31 @@ class Email
     public function getFailed(): ?bool
     {
         return $this->failed;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'account_id' => $this->account_id,
+            'from' => $this->data->getFrom(),
+            'to' => $this->data->getTo(),
+            'cc' => $this->data->getCc(),
+            'bcc' => $this->data->getBcc(),
+            'subject' => $this->data->getSubject(),
+            'body' => $this->data->getBody(),
+            'attachments' => $this->data->getAttachments(),
+            'reply_to' => $this->data->getReplyTo(),
+            'direction' => $this->direction->value,
+            'folder_id' => $this->folder_id,
+            'thread_id' => $this->thread_id,
+            'processed_at' => $this->processed_at->format('Y-m-d H:i:s'),
+            'read' => $this->read,
+            'read_at' => $this->read_at ? $this->read_at->format('Y-m-d H:i:s') : null,
+            'origin' => $this->origin?->value,
+            'external_id' => $this->external_id,
+            'deleted' => $this->deleted,
+            'failed' => $this->failed
+        ];
     }
 }

@@ -9,13 +9,14 @@ use App\Domain\Enums\Direction;
 use App\Domain\Enums\Origin;
 use App\Infrastructure\Persistence\EmailRepository;
 use Illuminate\Support\Facades\DB;
-use App\Data\EmailTokens;
+use App\Data\PaginatedEmailsData;
+use App\Data\PaginationData;
 
 class FacadesEmailRepository implements EmailRepository
 {
     private function map(object $data): Email
     {
-        return Email::create(
+        $email = Email::create(
             id: $data->id,
             account_id: $data->account_id,
             from: $data->from,
@@ -29,7 +30,7 @@ class FacadesEmailRepository implements EmailRepository
             folder_id: $data->folder_id,
             read: $data->read,
             read_at: $data->read_at ? new \DateTime($data->read_at) : null,
-            attachments: json_decode($data->attachments),
+            attachments: $data->attachments,
             thread_id: $data->thread_id,
             processed_at: new \DateTime($data->processed_at),
             external_id: $data->external_id,
@@ -37,6 +38,8 @@ class FacadesEmailRepository implements EmailRepository
             failed: $data->failed,
             reply_to: $data->reply_to
         );
+
+        return $email;
     }
 
     public function save(Email $email): void
@@ -82,6 +85,19 @@ class FacadesEmailRepository implements EmailRepository
         ]);
 
         $this->saveSearchTokens($email_tokens);
+    }
+
+    public function findById(string $id): ?Email
+    {
+        $data = DB::table('emails')
+        ->where('id', $id)
+        ->first();
+
+        if (!$data) {
+            return null;
+        }
+
+        return $this->map($data);
     }
 
     public function list(EmailFilter $filter): array
@@ -142,6 +158,85 @@ class FacadesEmailRepository implements EmailRepository
         })->all();
     }
 
+    public function findByAccount(string $accountId, array $filters, PaginationData $paginationData): PaginatedEmailsData
+    {
+        $query = DB::table('emails', 'e')
+            ->select('e.*')
+            ->join('email_search_tokens as est', 'e.id', '=', 'est.email_id')
+            ->where('e.account_id', $accountId)
+            ->limit($paginationData->perPage)
+            ->offset(($paginationData->page - 1) * $paginationData->perPage);
+
+
+        foreach($filters as [$filter, $value]) {
+            $query = $filter->apply($query, $value);
+        }
+
+        $query->distinct();
+
+        $emails = $query->get();
+        $total = count($emails);
+
+        if ($emails->isEmpty()) {
+            return PaginatedEmailsData::validateAndCreate([
+                'items' => [],
+                'total' => 0,
+                'currentPage' => $paginationData->page,
+                'perPage' => $paginationData->perPage
+            ]);
+        }
+
+        $mapped_emails = $emails->map(fn ($email) => $this->map($email))
+            ->all();
+
+        return PaginatedEmailsData::validateAndCreate([
+            'items' => $mapped_emails,
+            'total' => $total,
+            'currentPage' => $paginationData->page,
+            'perPage' => $paginationData->perPage
+        ]);
+    }
+
+    public function findByClient(string $clientDomain, array $filters, PaginationData $pagination): PaginatedEmailsData
+    {
+        $query = DB::table('emails', 'e')
+            ->select('e.*')
+            ->join('email_search_tokens as est', 'e.id', '=', 'est.email_id')
+            ->join('accounts as a', 'e.account_id', '=', 'a.id')
+            ->where('a.email_address', 'ILIKE', "%@$clientDomain");
+
+        foreach($filters as [$filter, $value]) {
+            $query = $filter->apply($query, $value);
+        }
+
+        $query->distinct();
+
+        $emails = $query->paginate(
+            perPage: $pagination->perPage,
+            columns: ['*'],
+            page: $pagination->page
+        );
+
+        if ($emails->isEmpty()) {
+            return PaginatedEmailsData::validateAndCreate([
+                'items' => [],
+                'total' => 0,
+                'currentPage' => $emails->currentPage(),
+                'perPage' => $emails->perPage()
+            ]);
+        }
+
+        $mapped_emails = $emails->getCollection()
+            ->map(fn ($email) => $this->map($email))
+            ->all();
+
+        return PaginatedEmailsData::validateAndCreate([
+            'items' => $mapped_emails,
+            'total' => $emails->total(),
+            'currentPage' => $emails->currentPage(),
+            'perPage' => $emails->perPage()
+        ]);
+    }
 
     function saveToken(string $email_id, string $type, $value)
     {
