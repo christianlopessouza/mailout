@@ -9,7 +9,7 @@ use Spatie\LaravelData\Data;
 class Credentials extends Data
 {
     public function __construct(
-        #[Required, Email]
+        #[Required,Email]
         public readonly string $email_address,
         #[Required]
         public readonly string $password,
@@ -17,8 +17,8 @@ class Credentials extends Data
         public readonly string $host,
         #[Required]
         public readonly int $port,
-
-        public readonly ?string $username
+        #[Required]
+        public readonly string $username
     ) {
     }
 }

@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('emails', function (Blueprint $table) {
-            $table->boolean('deleted')->default('default')->nullable();
+        Schema::table('accounts', function (Blueprint $table) {
+            $table->dropUnique('accounts_email_address_unique'); 
+            $table->string('email_address')->change();
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('emails', function (Blueprint $table) {
-            $table->boolean('deleted')->nullable(false)->change();
+        Schema::table('accounts', function (Blueprint $table) {
+            $table->string('email_address')->unique()->change();
         });
     }
 };

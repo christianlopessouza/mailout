@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Data\EmailTokens;
 use App\Domain\Entities\Account;
 use App\Domain\Entities\Email;
+use App\Domain\Enums\AccountType;
 use App\Domain\Enums\Direction;
 use App\Domain\Enums\Origin;
 use App\Helper\Crypto;
@@ -26,7 +27,7 @@ class DBMigrateCommand2 extends Command
      *
      * @var string
      */
-    protected $signature = 'app:migrate-mysql-to-postgree';
+    protected $signature = 'app:migrate-mysql-to-postgree {limit} {offset}';
 
     /**
      * The console command description.
@@ -47,6 +48,8 @@ class DBMigrateCommand2 extends Command
         $accountRepository = new FacadesAccountRepository();
         $emailRepository = new FacadesEmailRepository();
         $emailComplementRepository = new FacadesEmailComplementRepository();
+        $limit = $this->argument('limit') ?? 1000;
+        $offset = $this->argument('offset') ?? 0;
 
 
         $email_enviado_super = DB::connection('mysqlSMAIL')->select(
@@ -54,8 +57,8 @@ class DBMigrateCommand2 extends Command
             FROM email_enviado_super e
             LEFT JOIN email_cont ec ON ec.id = e.id_conta
             ORDER BY e.id ASC
-            LIMIT 5
-            OFFSET 0"
+            LIMIT $limit
+            OFFSET $offset"
         );
 
         $complements = [
@@ -81,7 +84,7 @@ class DBMigrateCommand2 extends Command
             'codigo_email' => null
         ];
 
-        foreach ($email_enviado_super as $email) {
+        foreach ($email_enviado_super as $key => $email) {
 
             $email_from = $email->from_email;
 
@@ -121,13 +124,12 @@ class DBMigrateCommand2 extends Command
                     if (!$verificaEmailConta) {
                         $data_email = (int) new DateTime($email->data_email)->format('Uv');
                         $account = Account::create(
-                            id: UUID::v7(),
                             email_address: $email_from,
                             password: Crypto::encrypt('BCNsddU3IeXeOiXGcUk3ie0d7YYabzi9+gzgJ2Vdix6T'),
                             host: 'email-smtp.us-east-1.amazonaws.com',
                             port: 587,
-                            token: UUID::v4(),
-                            username: 'AKIAVAVZ53YBCDCS4VVV'
+                            username: 'AKIAVAVZ53YBCDCS4VVV',
+                            type: AccountType::SENDER,
                         );
                         $accountRepository->save($account);
                         $id_conta = $account->getId();
@@ -251,9 +253,9 @@ class DBMigrateCommand2 extends Command
                     $emailComplementRepository->save($email_complements);
                 }
 
-                $this->info('Email migrado ' . $email->id . ' com sucesso: ' . $emailEntity->getId());
+                $this->info($key.'- Email migrado ' . $email->id . ' com sucesso: ' . $emailEntity->getId());
             } else {
-                $this->error('Já existe o email com ID: ' . $email->id . ', pulando...');
+                $this->error($key .'- Já existe o email com ID: ' . $email->id . ', pulando...');
             }
         }
     }

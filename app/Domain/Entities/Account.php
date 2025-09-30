@@ -2,7 +2,10 @@
 
 namespace App\Domain\Entities;
 
+use App\Domain\Enums\AccountType;
 use App\Util\UUID;
+
+
 
 class Account
 {
@@ -13,16 +16,19 @@ class Account
         private string $host,
         private int $port,
         private string $token,
+        private bool $active,
+        private AccountType $type,
         private ?string $username
-    ) {
-    }
+    ) {}
 
     public static function create(
         string $email_address,
         string $password,
         string $host,
         int $port,
-        ?string $token,
+        AccountType $type,
+        ?bool $active = null,
+        ?string $token = null,
         ?string $id = null,
         ?string $username = null
     ): Account {
@@ -33,13 +39,15 @@ class Account
         $token ??= UUID::v4();
 
         return new self(
-            $id,
-            $email_address,
-            $password,
-            $host,
-            $port,
-            $token,
-            $username
+            id: $id,
+            email_address: $email_address,
+            password: $password,
+            host: $host,
+            port: $port,
+            token: $token,
+            username: $username,
+            type: $type,
+            active: $active ?? true
         );
     }
 
@@ -56,7 +64,7 @@ class Account
 
     public function getUsername(): ?string
     {
-        return $this->username;
+        return $this->username ?? $this->email_address;
     }
 
 
@@ -78,5 +86,13 @@ class Account
     public function getToken(): string
     {
         return $this->token;
+    }
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+    public function getType(): AccountType
+    {
+        return $this->type;
     }
 }
