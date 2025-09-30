@@ -23,8 +23,7 @@ class Register
         public readonly ClientRepository $clientRepository,
         public readonly AccountRepository $accountRepository,
         public readonly EmailAuthenticationService $emailAuthenticationService
-    ) {
-    }
+    ) {}
 
     public function execute(RegisterInputData $input): RegisterOutputData
     {
@@ -73,8 +72,8 @@ class Register
             password: $password,
             host: $host,
             port: $port,
-            type: AccountType::SENDER,
             token: UUID::v4(),
+            type: AccountType::SENDER,
         );
 
         $this->accountRepository->save($account);

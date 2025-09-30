@@ -6,6 +6,7 @@ use App\Data\EmailAuthentication;
 use App\Data\Input\RegisterAccountInputData;
 use App\Data\Output\RegisterAccountOutputData;
 use App\Domain\Entities\Account;
+use App\Domain\Enums\AccountType;
 use App\Errors\AccountAlreadyRegisteredError;
 use App\Errors\InvalidAuthError;
 use App\Errors\UnauthorizedDomainError;
@@ -61,6 +62,7 @@ class RegisterAccount
             host: $data->host,
             port: $data->port,
             token: UUID::v4(),
+            type: AccountType::SENDER, // dps corrigir
             username: $data->username
         );
 

@@ -40,7 +40,8 @@ class RegisterAccountController implements Controller
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Failed to register account'
+                'message' => 'Failed to register account',
+                'texto' => $th->getMessage()
             ], 400);
         }
     }
