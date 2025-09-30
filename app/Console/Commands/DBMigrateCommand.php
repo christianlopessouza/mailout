@@ -436,4 +436,3 @@ function uuidv7_from_timestamp(int $timestampMillis): string
         $node                               // node
     ));
 }
-
