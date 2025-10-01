@@ -22,7 +22,7 @@ class FacadesAddressFilter implements EmailFilter
                 ->from('email_search_tokens AS est_address')
                 ->whereRaw('e.id = est_address.email_id')
                 ->whereIn('est_address.type', ['from', 'to', 'cc'])
-                ->whereRaw("est_address.value ILIKE ?", ["%$value%"]);
+                ->whereRaw("est_address.value = ?", ["$value"]);
         });
     }
 }
