@@ -7,12 +7,14 @@ use App\Http\Master\Controllers\FilterEmailsByClientController;
 use App\Http\Master\Controllers\FilterEmailsByAccountController;
 use App\Http\Master\Controllers\SendEmailByClientController;
 use App\Http\Master\Controllers\SendEmailController;
+use App\Http\Master\Controllers\ListEmailByIdController;
 use Illuminate\Support\Facades\Route;
 
 // Consultas exteriores
 Route::middleware(['auth.public.client'])->prefix('public/client')->group(function () {
     Route::post('/registerAccount', RegisterAccountController::class);
     Route::get('/list-emails', FilterEmailsByClientController::class);
+    Route::get('/list-email/{id}', ListEmailByIdController::class);
     Route::post('/send-email', SendEmailByClientController::class);
     // Route::post('/emails/batch', [StoreBatchController::class, 'storeBatch']);
     // Route::get('/emails/batch/send/{amount}', [SendBatchController::class, 'sendBatch']);
@@ -29,4 +31,3 @@ Route::get('/ping', function () {
 });
 
 Route::post('/email-complement/save', \App\Http\Master\Controllers\SaveEmailComplementController::class);
-    
