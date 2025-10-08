@@ -34,7 +34,7 @@ class SendEmailByClientController
             }
 
             $input = SendEmailByClientInputData::validateAndCreate([
-                'client'=> $client,
+                'client' => $client,
                 'email' => [
                     'from' => $request->input('from'),
                     'to' => $request->input('to'),

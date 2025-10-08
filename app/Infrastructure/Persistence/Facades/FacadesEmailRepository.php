@@ -16,6 +16,11 @@ class FacadesEmailRepository implements EmailRepository
 {
     private function map(object $data): Email
     {
+        $complements = null;
+        if (isset($data->complement_data) && $data->complement_data) {
+            $complements = json_decode($data->complement_data, true);
+        }
+
         $email = Email::create(
             id: $data->id,
             account_id: $data->account_id,
@@ -36,7 +41,8 @@ class FacadesEmailRepository implements EmailRepository
             external_id: $data->external_id,
             deleted: $data->deleted,
             failed: $data->failed,
-            reply_to: $data->reply_to
+            reply_to: $data->reply_to,
+            complements: $complements
         );
 
         return $email;
@@ -90,8 +96,8 @@ class FacadesEmailRepository implements EmailRepository
     public function findById(string $id): ?Email
     {
         $data = DB::table('emails')
-        ->where('id', $id)
-        ->first();
+            ->where('id', $id)
+            ->first();
 
         if (!$data) {
             return null;
@@ -161,14 +167,15 @@ class FacadesEmailRepository implements EmailRepository
     public function findByAccount(string $accountId, array $filters, PaginationData $paginationData): PaginatedEmailsData
     {
         $query = DB::table('emails', 'e')
-            ->select('e.*')
+            ->select('e.*', 'ec.complement_data')
             ->join('email_search_tokens as est', 'e.id', '=', 'est.email_id')
+            ->join('email_complements as ec', 'e.id', '=', 'ec.email_id')
             ->where('e.account_id', $accountId)
             ->limit($paginationData->perPage)
             ->offset(($paginationData->page - 1) * $paginationData->perPage);
 
 
-        foreach($filters as [$filter, $value]) {
+        foreach ($filters as [$filter, $value]) {
             $query = $filter->apply($query, $value);
         }
 
@@ -186,7 +193,7 @@ class FacadesEmailRepository implements EmailRepository
             ]);
         }
 
-        $mapped_emails = $emails->map(fn ($email) => $this->map($email))
+        $mapped_emails = $emails->map(fn($email) => $this->map($email))
             ->all();
 
         return PaginatedEmailsData::validateAndCreate([
@@ -200,12 +207,13 @@ class FacadesEmailRepository implements EmailRepository
     public function findByClient(string $clientDomain, array $filters, PaginationData $pagination): PaginatedEmailsData
     {
         $query = DB::table('emails', 'e')
-            ->select('e.*')
+            ->select('e.*', 'ec.complement_data')
             ->join('email_search_tokens as est', 'e.id', '=', 'est.email_id')
+            ->leftJoin('email_complements as ec', 'e.id', '=', 'ec.email_id')
             ->join('accounts as a', 'e.account_id', '=', 'a.id')
             ->where('a.email_address', 'ILIKE', "%@$clientDomain");
 
-        foreach($filters as [$filter, $value]) {
+        foreach ($filters as [$filter, $value]) {
             $query = $filter->apply($query, $value);
         }
 
@@ -227,7 +235,7 @@ class FacadesEmailRepository implements EmailRepository
         }
 
         $mapped_emails = $emails->getCollection()
-            ->map(fn ($email) => $this->map($email))
+            ->map(fn($email) => $this->map($email))
             ->all();
 
         return PaginatedEmailsData::validateAndCreate([

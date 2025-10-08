@@ -23,6 +23,7 @@ class Email
         private ?bool $read = null,
         private ?\DateTime $read_at = null,
         private ?string $external_id = null,
+        private ?array $complements = null,
     ) {}
 
     public static function create(
@@ -45,7 +46,8 @@ class Email
         ?string $external_id = null,
         ?bool $deleted = null,
         ?bool $failed = null,
-        ?string $reply_to = null
+        ?string $reply_to = null,
+        ?array $complements = null
     ): Email {
         if ($direction === Direction::INCOMING) {
             if (!is_bool($read))
@@ -93,7 +95,8 @@ class Email
             origin: $origin,
             external_id: $external_id,
             deleted: $deleted ?? false,
-            failed: $failed ?? false
+            failed: $failed ?? false,
+            complements: $complements
         );
     }
 
@@ -177,6 +180,11 @@ class Email
         return $this->failed;
     }
 
+    public function getComplements(): ?array
+    {
+        return $this->complements;
+    }
+
     public function toArray(): array
     {
         return [
@@ -199,7 +207,8 @@ class Email
             'origin' => $this->origin?->value,
             'external_id' => $this->external_id,
             'deleted' => $this->deleted,
-            'failed' => $this->failed
+            'failed' => $this->failed,
+            'complements' => $this->complements
         ];
     }
 }
