@@ -10,6 +10,10 @@ use App\Http\Master\Controllers\SendEmailController;
 use App\Http\Master\Controllers\ListEmailByIdController;
 use Illuminate\Support\Facades\Route;
 
+Route::options('{any}', function () {
+    return response()->noContent(204);
+})->where('any', '.*');
+
 // Consultas exteriores
 Route::middleware(['auth.public.client'])->prefix('public/client')->group(function () {
     Route::post('/registerAccount', RegisterAccountController::class);
