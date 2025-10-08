@@ -154,7 +154,8 @@ class FacadesEmailRepository implements EmailRepository
 
         // Paginação
         $query->skip(($filter->page - 1) * $filter->limit_per_page)
-            ->take($filter->limit_per_page);
+            ->take($filter->limit_per_page)
+            ->orderBy('processed_at', 'desc');
 
         $rawResults = $query->get();
 
@@ -172,7 +173,8 @@ class FacadesEmailRepository implements EmailRepository
             ->join('email_complements as ec', 'e.id', '=', 'ec.email_id')
             ->where('e.account_id', $accountId)
             ->limit($paginationData->perPage)
-            ->offset(($paginationData->page - 1) * $paginationData->perPage);
+            ->offset(($paginationData->page - 1) * $paginationData->perPage)
+            ->orderBy('e.processed_at', 'desc');
 
 
         foreach ($filters as [$filter, $value]) {
@@ -211,7 +213,8 @@ class FacadesEmailRepository implements EmailRepository
             ->join('email_search_tokens as est', 'e.id', '=', 'est.email_id')
             ->leftJoin('email_complements as ec', 'e.id', '=', 'ec.email_id')
             ->join('accounts as a', 'e.account_id', '=', 'a.id')
-            ->where('a.email_address', 'ILIKE', "%@$clientDomain");
+            ->where('a.email_address', 'ILIKE', "%@$clientDomain")
+            ->orderBy('e.processed_at', 'desc');
 
         foreach ($filters as [$filter, $value]) {
             $query = $filter->apply($query, $value);
