@@ -16,16 +16,16 @@ class EmailComplementService
         private readonly EmailComplementTemplateRepository $emailComplementTemplateRepository,
     ) {}
 
-    public function applyTemplateAndSave(object $complements, string $account_id): object
+    public function applyTemplateAndSave(object $complements, string $client_id): object
     {
-        $template = $this->emailComplementTemplateRepository->findByClientId($account_id);
+        $template = $this->emailComplementTemplateRepository->findByClientId($client_id);
         if (!$template) {
             throw new Exception("Template not found");
         }
 
         return $this->resolveTemplate(
-            $template->template,
-            $complements
+            template: $template->template,
+            complements_values: $complements
         );
     }
 

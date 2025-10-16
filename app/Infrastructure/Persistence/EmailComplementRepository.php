@@ -7,7 +7,7 @@ use Spatie\LaravelData\Data;
 class EmailComplementDTO extends Data
 {
     public string $email_id;
-    public array $complement_data;
+    public object $complements;
 }
 
 interface EmailComplementRepository

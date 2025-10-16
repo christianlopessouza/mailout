@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('emails', function (Blueprint $table) {
-            $table->boolean('deleted')->default('default')->nullable();
+            $table->boolean('deleted')->default(false)->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('emails', function (Blueprint $table) {
-            $table->boolean('deleted')->nullable(false)->change();
+            $table->dropColumn('deleted');
         });
     }
 };

@@ -13,7 +13,7 @@ class FacadesEmailComplementRepository implements EmailComplementRepository
         $now = new \DateTime();
         DB::table('email_complements')->insert([
             'email_id'      => $data->email_id,
-            'complement_data' => json_encode($data->complement_data),
+            'complement_data' => json_encode($data->complements),
             'created_at'    => $now,
             'updated_at'    => $now,
         ]);

@@ -46,7 +46,7 @@ class FacadesEmailComplementTemplateRepository implements EmailComplementTemplat
     public function findByClientId(string $client_id): ?EmailComplementTemplate
     {
         $data = DB::table('email_complements_template')
-            ->where('client_id', $client_id)  
+            ->where('client_id', $client_id)
             ->first();
 
         if (!$data) {
@@ -55,37 +55,6 @@ class FacadesEmailComplementTemplateRepository implements EmailComplementTemplat
 
         $template = $this->map($data);
 
-        if (!$this->validateComplementsWithTemplate($template->template, $client_id)) {
-            throw new \Exception("Complement type does not match the template for client_id: $client_id");
-        }
-
         return $template;
     }
-
-    private function validateComplementsWithTemplate(object $template, string $email_id): bool
-    {
-        foreach ($template as $key => $templateValue) {
-            $complementValue = $this->getComplementValueForKey($email_id);  
-
-            if ($complementValue === null) {
-                throw new \Exception("Complement not found.");
-            }
-
-            // Validação do tipo, conforme necessário
-            if (!in_array($complementValue, $templateValue)) {
-                throw new \Exception("Complement type does not match template.");
-            }
-        }
-
-        return true;
-    }
-
-
-    private function getComplementValueForKey(string $email_id)
-    {
-        return DB::table('email_complements')
-            ->where('email_id', $email_id)  
-            ->value('complement_data');  
-    }
-
 }

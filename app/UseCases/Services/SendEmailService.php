@@ -93,9 +93,9 @@ class SendEmailService
         if ($email_input->complements) {
             $resolved_complements = $this->emailComplementService->applyTemplateAndSave(
                 complements: $email_input->complements,
-                account_id: $account->getId()
+                client_id:  $account->getId()
             );
-        }
+        }   
 
         if ($resolved_complements) {
             $email_complements = EmailComplementDTO::validateAndCreate([

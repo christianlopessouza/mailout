@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domain\Entities\Account;
+use App\Domain\Enums\AccountType;
 use App\Helper\Crypto;
 use App\Infrastructure\Persistence\AccountRepository;
 use Illuminate\Database\Seeder;
@@ -29,7 +30,8 @@ class AccountSeeder extends Seeder
             host: 'mail.gruposuper.com.br',
             port: 587,
             token: 'e72f66b2-b5b0-4e05-9a84-ca425e866f65',
-            username: 'root'
+            username: 'root',
+            type: AccountType::SENDER
         );
 
         $account_list[] = Account::create(
@@ -39,7 +41,8 @@ class AccountSeeder extends Seeder
             host: 'mail.gruposuper.com.br',
             port: 587,
             token: 'c1072a02-c8bb-439d-8a54-59cbab887610',
-            username: 'root'
+            username: 'root',
+            type: AccountType::SENDER
         );
 
         $account_list[] = Account::create(
@@ -49,7 +52,8 @@ class AccountSeeder extends Seeder
             host: 'email-smtp.us-east-1.amazonaws.com',
             port: 587,
             token: '7463191b-d354-445e-bea4-356812197491',
-            username: 'AKIAVAVZ53YBCDCS4VVV'
+            username: 'AKIAVAVZ53YBCDCS4VVV',
+            type: AccountType::SENDER
         );
 
         $account_list[] = Account::create(
@@ -59,7 +63,8 @@ class AccountSeeder extends Seeder
             host: 'email-smtp.us-east-1.amazonaws.com',
             port: 587,
             token: 'dda281ad-48d1-4316-908c-3d590caf583c',
-            username: 'AKIAVAVZ53YBCDCS4VVV'
+            username: 'AKIAVAVZ53YBCDCS4VVV',
+            type: AccountType::SENDER
         );
 
         $account_list[] = Account::create(
@@ -69,7 +74,8 @@ class AccountSeeder extends Seeder
             host: 'mail.gruposuper.com.br',
             port: 587,
             token: '9939a69b-5631-4890-aa5e-be21a3f74e52',
-            username: 'ti'
+            username: 'ti',
+            type: AccountType::SENDER
         );
 
         foreach ($account_list as $account) {
