@@ -8,6 +8,7 @@ use App\Http\Master\Controllers\FilterEmailsByAccountController;
 use App\Http\Master\Controllers\SendEmailByClientController;
 use App\Http\Master\Controllers\SendEmailController;
 use App\Http\Master\Controllers\ListEmailByIdController;
+use App\Http\Master\Controllers\ListEmailsByThreadIdController;
 use App\Http\Master\Controllers\SaveEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,8 @@ Route::middleware(['auth.public.client'])->prefix('public/client')->group(functi
     Route::post('/save-email', SaveEmailController::class);
     // Route::post('/emails/batch', [StoreBatchController::class, 'storeBatch']);
     // Route::get('/emails/batch/send/{amount}', [SendBatchController::class, 'sendBatch']);
+    Route::get('/list-emails-thread/{thread_id}', ListEmailsByThreadIdController::class);
+    Route::post('/update-email-complement',UpdateEmailComplementController::class);
 });
 
 Route::middleware(['auth.public.account'])->prefix('public/account')->group(function () {
