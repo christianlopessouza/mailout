@@ -106,6 +106,22 @@ class FacadesEmailRepository implements EmailRepository
         return $this->map($data);
     }
 
+    public function findByThreadId(string $threadId): array
+    {
+        $data = DB::table('emails')
+            ->where('thread_id', $threadId)
+            ->orderBy('processed_at', 'asc')
+            ->get();
+
+        if ($data->isEmpty()) {
+            return [];
+        }
+
+        return $data->map(function ($email) {
+            return $this->map($email);
+        })->all();
+    }
+
     public function list(EmailFilter $filter): array
     {
         $query = DB::table('emails');

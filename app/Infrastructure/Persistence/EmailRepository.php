@@ -19,6 +19,11 @@ interface EmailRepository
      */
     public function list(EmailFilter $filter): array;
 
+    /**
+     * @return Email[]
+     */
+    public function findByThreadId(string $threadId): array;
+
     public function saveSearchTokens(EmailSearchTokens $emailTokens): void;
 
     /**
