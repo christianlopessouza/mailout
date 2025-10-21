@@ -14,6 +14,7 @@ class SaveEmailInputData extends Data
 {
     public function __construct(
         public Account $account,
+        public string $from,
         public array $to,
 
         #[Required]

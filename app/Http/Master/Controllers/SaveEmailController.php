@@ -67,6 +67,7 @@ class SaveEmailController
    
             $saveEmailInput = SaveEmailInputData::validateAndCreate([
                 'account' => $account,
+                'from' => $request->input('from'),
                 'to' => $request->input('to'),
                 'cc' => $request->input('cc'),
                 'bcc' => $request->input('bcc'),
@@ -85,9 +86,11 @@ class SaveEmailController
                 throw new \Exception('Folder not found');
             }
 
+           
+
             $email = Email::create(
                 account_id: $account->getId(),
-                from: $account->getEmailAddress(),
+                from: $saveEmailInput->from,
                 to: $saveEmailInput->to,
                 cc: $saveEmailInput->cc,
                 bcc: $saveEmailInput->bcc,
