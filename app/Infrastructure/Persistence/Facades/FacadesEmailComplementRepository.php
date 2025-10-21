@@ -18,4 +18,30 @@ class FacadesEmailComplementRepository implements EmailComplementRepository
             'updated_at'    => $now,
         ]);
     }
+
+    public function findByEmailId(string $email_id): ?EmailComplementDTO
+    {
+        $data = DB::table('email_complements')
+            ->where('email_id', $email_id)
+            ->first();
+
+        if (!$data) {
+            return null;
+        }
+
+        return EmailComplementDTO::validateAndCreate([
+            'email_id' => $data->email_id,
+            'complements' => json_decode($data->complement_data),
+        ]);
+    }
+
+    public function update(string $email_id, object $complements): void
+    {
+        DB::table('email_complements')
+            ->where('email_id', $email_id)
+            ->update([
+                'complement_data' => json_encode($complements),
+                'updated_at' => now(),
+            ]);
+    }
 }

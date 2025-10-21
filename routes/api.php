@@ -11,6 +11,7 @@ use App\Http\Master\Controllers\ListEmailByIdController;
 // use App\Http\Master\Controllers\ListEmailsByThreadIdController;
 use App\Http\Master\Controllers\SaveEmailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Master\Controllers\UpdateEmailComplementController;
 
 Route::options('{any}', function () {
     return response()->noContent(204);
@@ -26,7 +27,7 @@ Route::middleware(['auth.public.client'])->prefix('public/client')->group(functi
     // Route::post('/emails/batch', [StoreBatchController::class, 'storeBatch']);
     // Route::get('/emails/batch/send/{amount}', [SendBatchController::class, 'sendBatch']);
     // Route::get('/list-emails-thread/{thread_id}', ListEmailsByThreadIdController::class);
-    // Route::post('/update-email-complement',UpdateEmailComplementController::class);
+    Route::post('/update-email-complement/{id}',UpdateEmailComplementController::class);
 });
 
 Route::middleware(['auth.public.account'])->prefix('public/account')->group(function () {
@@ -38,5 +39,8 @@ Route::middleware(['auth.public.account'])->prefix('public/account')->group(func
 Route::get('/ping', function () {
     return response()->json(['ok' => true]);
 });
+
+// Rota temporária para teste (sem middleware)
+Route::post('/test-update-email-complement/{id}', UpdateEmailComplementController::class);
 
 Route::post('/email-complement/save', \App\Http\Master\Controllers\SaveEmailComplementController::class);
