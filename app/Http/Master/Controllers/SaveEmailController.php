@@ -52,6 +52,11 @@ class SaveEmailController
                 throw new \Exception('Account not found');
             }
 
+            $email = $this->emailRepository->findByExternalId($request->input('external_id'));
+            if ($email) {
+                throw new \Exception('Email already exists');
+            }
+
             $attachments = [];
 
             if (!!$request->file('attachments')) {
@@ -64,7 +69,7 @@ class SaveEmailController
                     ])->toArray();
                 }
             }
-   
+
             $saveEmailInput = SaveEmailInputData::validateAndCreate([
                 'account' => $account,
                 'from' => $request->input('from'),
@@ -86,7 +91,7 @@ class SaveEmailController
                 throw new \Exception('Folder not found');
             }
 
-           
+
 
             $email = Email::create(
                 account_id: $account->getId(),
@@ -147,11 +152,11 @@ class SaveEmailController
             $this->emailComplementRepository->save($email_complements);
 
             return response()->json([
-                'message' => 'Email complement saved successfully',
+                'message' => 'Email saved successfully',
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Error saving email',
+                'message' => 'Error saving email: ' . $th->getMessage(),
                 'error'   => $th->getMessage(),
             ], 400);
         }

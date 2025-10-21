@@ -37,4 +37,11 @@ interface EmailRepository
      * @param EmailFilter[] $filter
      */
     public function findByClient(string $clientId, array $filters, PaginationData $pagination): PaginatedEmailsData;
+
+    /**
+     * @return Email
+     */
+    public function findByExternalId(string $externalId): ?Email;
+
+
 }

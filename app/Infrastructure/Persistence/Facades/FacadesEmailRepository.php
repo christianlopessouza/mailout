@@ -276,6 +276,18 @@ class FacadesEmailRepository implements EmailRepository
         ]);
     }
 
+    public function findByExternalId(string $externalId): ?Email
+    {
+        $data = DB::table('emails')
+            ->where('external_id', $externalId)
+            ->first();
+
+        if (!$data) {
+            return null;
+        }
+
+        return $this->map($data);
+    }
 
     public function saveSearchTokens(EmailSearchTokens $email_tokens): void
     {
