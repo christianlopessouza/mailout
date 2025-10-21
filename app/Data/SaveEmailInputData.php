@@ -39,6 +39,8 @@ class SaveEmailInputData extends Data
 
         public ?string $external_id = null,
 
+        public ?object $complements = null,
+
         #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d H:i:s')]
         public ?\DateTime $processed_at = null
     ) {}
