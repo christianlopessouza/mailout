@@ -13,14 +13,6 @@ use App\Http\Master\Controllers\SaveEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Master\Controllers\UpdateEmailComplementController;
 
-Route::options('{any}', function () {
-    return response()->noContent(204)
-        ->header('Access-Control-Allow-Origin', '*')
-        ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-        ->header('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Requested-With, Accept')
-        ->header('Access-Control-Max-Age', '86400');
-})->where('any', '.*');
-
 // Consultas exteriores
 Route::middleware(['auth.public.client'])->prefix('public/client')->group(function () {
     Route::post('/registerAccount', RegisterAccountController::class);
