@@ -3,10 +3,10 @@
 namespace App\UseCases;
 
 use App\Infrastructure\Persistence\EmailRepository;
-use App\Data\Input\ListEmailsByThreadIdInputData;
+use App\Data\Input\ListEmailsByThreadInputData;
 use App\Domain\Entities\Email;
 
-class ListEmailsByThreadId
+class ListEmailsByThread
 {
     public function __construct(
         private readonly EmailRepository $emailRepository
@@ -15,7 +15,7 @@ class ListEmailsByThreadId
     /**
      * @return Email[]
      */
-    public function execute(ListEmailsByThreadIdInputData $input): array
+    public function execute(ListEmailsByThreadInputData $input): array
     {
         return $this->emailRepository->findByThreadId($input->thread_id);
     }

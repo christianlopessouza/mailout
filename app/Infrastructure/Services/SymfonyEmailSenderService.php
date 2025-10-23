@@ -69,7 +69,15 @@ class SymfonyEmailSenderService implements EmailSenderService
             $mailer->send($symfonyEmail);
             return true;
         } catch (Exception $e) {
-            echo $e->getMessage();
+            // Log do erro para debug
+            \Log::error('Email send failed: ' . $e->getMessage(), [
+                'exception' => $e,
+                'credentials' => [
+                    'host' => $credentials->host,
+                    'port' => $credentials->port,
+                    'email_address' => $credentials->email_address
+                ]
+            ]);
             return false;
         }
     }

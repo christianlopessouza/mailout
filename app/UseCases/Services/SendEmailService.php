@@ -128,7 +128,7 @@ class SendEmailService
         if (!$sent_successfuly) {
             $email->markAsFailed();
             $this->emailRepository->save($email);
-            throw new EmailSendFailureError();
+            throw new EmailSendFailureError('Failed to send email. Check SMTP credentials and configuration.');
         }
 
         $response = new SendEmailServiceResponseData(

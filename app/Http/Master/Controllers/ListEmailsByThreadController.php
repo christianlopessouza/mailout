@@ -2,27 +2,27 @@
 
 namespace App\Http\Master\Controllers;
 
-use App\Data\Input\ListEmailsByThreadIdInputData;
+use App\Data\Input\ListEmailsByThreadInputData;
 use App\Http\Controller;
 use App\Http\Presenters\EmailPresenter;
-use App\UseCases\ListEmailsByThreadId;
+use App\UseCases\ListEmailsByThread;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class ListEmailsByThreadIdController implements Controller
+class ListEmailsByThreadController implements Controller
 {
     public function __construct(
-        private ListEmailsByThreadId $listEmailsByThreadId
+        private ListEmailsByThread $listEmailsByThread
     ) {}
 
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $input = ListEmailsByThreadIdInputData::from([
+            $input = ListEmailsByThreadInputData::from([
                 'thread_id' => $request->route('thread_id')
             ]);
 
-            $emails = $this->listEmailsByThreadId->execute($input);
+            $emails = $this->listEmailsByThread->execute($input);
 
             // Sempre retorna um array, mesmo que vazio
             $emails_formatted = array_map(function ($email) {

@@ -65,8 +65,15 @@ class SendEmailController
                 'email_id' => $emailId,
             ], 200);
         } catch (\Exception $th) {
+            \Log::error('SendEmailController error: ' . $th->getMessage(), [
+                'exception' => $th,
+                'request_data' => $request->all()
+            ]);
+            
             return response()->json([
-                'message' => $th->getMessage()
+                'message' => $th->getMessage(),
+                'error_type' => get_class($th),
+                'details' => $th->getTraceAsString()
             ], 400);
         }
     }
