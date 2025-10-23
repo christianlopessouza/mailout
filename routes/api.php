@@ -33,7 +33,7 @@ Route::middleware(['auth.public.account'])->prefix('public/account')->group(func
 });
 
 Route::get('/ping', function () {
-    return response()->json(['ok' => true]);
+    return response()->json(['ok' => true,"v"=>"1.0.0"]);
 });
 
 // Rota temporária para teste (sem middleware)
