@@ -95,7 +95,14 @@ class SendEmailService
                 complements: $email_input->complements,
                 client_id:  $account->getId()
             );
-        }   
+        } else {
+            // Se não há complements específicos, verifica se existe template para o cliente
+            $template = $this->emailComplementTemplateRepository->findByClientId($account->getId());
+            if ($template) {
+                // Usa o template como complement quando não há complement específico
+                $resolved_complements = $template->getTemplate();
+            }
+        }
 
         if ($resolved_complements) {
             $email_complements = EmailComplementDTO::validateAndCreate([

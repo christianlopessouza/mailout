@@ -225,4 +225,35 @@ describe('Send email', function () {
 
         $this->assertTrue(in_array($complementValue, $template->value), 'Complement value is not valid.');
     });
+
+    it('should use template as fallback when no complements are provided', function () {
+        // Limpa os complements do input
+        $this->input->email->complements = null;
+        
+        // Executa o envio
+        $result = $this->sendEmail->execute($this->input);
+        
+        // Verifica se o email foi criado
+        expect($result->email->getId())->toBeString();
+        
+        // Verifica se o complement foi salvo usando o template
+        $emailComplement = DB::table('email_complements')
+            ->where('email_id', $result->email->getId())
+            ->first();
+            
+        expect($emailComplement)->not->toBeNull('Email complement should be saved');
+        
+        $complementData = json_decode($emailComplement->complement_data, true);
+        expect($complementData)->not->toBeNull('Complement data should not be null');
+        
+        // Verifica se o template foi usado como fallback
+        $template = DB::table('email_complements_template')
+            ->where('client_id', $this->account->getId())
+            ->first();
+            
+        expect($template)->not->toBeNull('Template should exist');
+        
+        $templateData = json_decode($template->template, true);
+        expect($complementData)->toBe($templateData, 'Complement should match template when used as fallback');
+    });
 });
