@@ -52,8 +52,9 @@ class SendEmailByClientController
             ]);
 
             $sendEmailByClientOutput = $this->sendEmailByClientOutput->execute($input);
+            $emailId = $sendEmailByClientOutput->email->getId();
             return response()->json([
-                'message' => 'Mail sent successfully, complement and template saved',
+                'email_id' => $emailId,
             ], 200);
         } catch (\Exception $th) {
             return response()->json([

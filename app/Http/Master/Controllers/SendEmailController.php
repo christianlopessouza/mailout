@@ -62,7 +62,7 @@ class SendEmailController
             // Obtém o ID do e-mail diretamente do Email (não do SendEmailOutputData)
             $emailId = $sendEmailOutput->email->getId();  // Aqui obtemos o ID do Email diretamente
             return response()->json([
-                'message' => 'Mail sent successfully, complement and template saved',
+                'email_id' => $emailId,
             ], 200);
         } catch (\Exception $th) {
             return response()->json([
