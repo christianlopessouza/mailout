@@ -17,9 +17,19 @@ class FacadesComplementsFilter implements EmailFilter
             throw new \InvalidArgumentException('Value must be an object with complements');
         }
 
-        $query->join('email_complements AS ec', 'e.id', '=', 'ec.email_id');
+        // Não faz JOIN aqui pois o repository já faz leftJoin com 'ec'
+        // Apenas adiciona as condições WHERE
         foreach ($value as $key => $val) {
-            $query->whereRaw("ec.complement_data @> ?", [json_encode([$key => $val])]);
+            if (is_array($val)) {
+                // Monta condicoes OR para qualquer um dos valores
+                $query->where(function ($q) use ($key, $val) {
+                    foreach ($val as $v) {
+                        $q->orWhereRaw("ec.complement_data @> ?", [json_encode([$key => $v])]);
+                    }
+                });
+            } else {
+                $query->whereRaw("ec.complement_data @> ?", [json_encode([$key => $val])]);
+            }
         }
 
         return $query;

@@ -133,7 +133,7 @@ class SaveEmailController
                 }
             }
 
-            $complements = json_decode('{"copia": "", "modulo": "", "status": "", "problema": "", "resposta": "", "resolvido": 0, "atualizado": "", "data_email": "", "importante": "", "respondido": "", "id_controle": "", "codigo_email": "", "id_categoria": "", "cod_encadeado": "", "data_resposta": "", "exige_resposta": "", "id_requisitado": "", "quem_respondeu": "", "controle_interno": "", "id_quem_respondeu": "", "quem_confirmo_exclusao": ""}');
+            $complements = json_decode('{"copia": "", "modulo": "", "status": 0, "problema": "", "resposta": "", "resolvido": 0, "atualizado": "", "data_email": "", "importante": "", "respondido": "", "id_controle": "", "codigo_email": "", "id_categoria": "", "cod_encadeado": "", "data_resposta": "", "exige_resposta": "", "id_requisitado": "", "quem_respondeu": "", "controle_interno": "", "id_quem_respondeu": "", "quem_confirmo_exclusao": ""}');
             if ($saveEmailInput->complements) {
                 foreach ($saveEmailInput->complements as $key => $value) {
                     $complements->{$key} = $value;

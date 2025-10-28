@@ -17,12 +17,9 @@ class FacadesAddressFilter implements EmailFilter
             throw new \InvalidArgumentException('Value must be a string');
         }
 
-        return $query->whereExists(function ($query) use ($value) {
-            $query->selectRaw(1)
-                ->from('email_search_tokens AS est_address')
-                ->whereRaw('e.id = est_address.email_id')
-                ->whereIn('est_address.type', ['from', 'to', 'cc'])
-                ->whereRaw("est_address.value = ?", ["$value"]);
+        return $query->where(function ($q) use ($value) {
+            $q->whereIn('est.type', ['from', 'to', 'cc', 'bcc'])
+              ->where('est.value', $value);
         });
     }
-}
+} 
