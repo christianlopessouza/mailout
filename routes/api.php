@@ -18,6 +18,7 @@ use App\Http\Master\Controllers\UpdateEmailComplementController;
 Route::middleware(['auth.public.client'])->prefix('public/client')->group(function () {
     Route::post('/registerAccount', RegisterAccountController::class);
     Route::get('/list-emails', FilterEmailsByClientController::class);
+    Route::post('/filter-emails', FilterEmailsByClientController::class);
     Route::get('/list-email/{id}', ListEmailByIdController::class);
     Route::post('/send-email', SendEmailByClientController::class);
     Route::post('/save-email', SaveEmailController::class);

@@ -55,10 +55,11 @@ class DBMigrateCommand3 extends Command
             "SELECT e.*,ec.email as email_conta
             FROM email e
             LEFT JOIN email_cont ec ON ec.id = e.id_conta
-            WHERE ec.email IN ('unidade.cuiaba@superestagios.com.br')
+            WHERE ec.email IN ('operacional.vitoria@superestagios.com.br','operacional@superestagios.com.br','ariene.thomaz@superestagios.com.br','jr.fagundes@superestagios.com.br','adm.vale@superestagios.com.br','superatendimento@superestagios.com.br','daniela.s@superestagios.com.br','unidade.cuiaba@superestagios.com.br','comercial.cuiaba@superestagios.com.br','celso.andrade@superestagios.com.br','operacional.caixa@superestagios.com.br','comercial@superestagios.com.br','julianatorres@superestagios.com.br','samf@superestagios.com.br','convencao@superestagios.com.br','atendimento.vix@superestagios.com.br','rh.caixa@superestagios.com.br','poliana@superestagios.com.br','poliana.modenesi@superestagios.com.br')
             AND MONTH(e.data_email) = 10 AND YEAR(e.data_email) = 2025
-            ORDER BY e.id ASC
-            LIMIT 100"
+            ORDER BY e.id DESC
+            LIMIT 100000000
+            "
         );
 
 
