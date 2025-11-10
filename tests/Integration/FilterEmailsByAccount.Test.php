@@ -433,17 +433,17 @@ describe('Filter Emails By Account', function () {
             FilterEmailsByAccountInputData::validateAndCreate([
                 'account' => $this->account,
                 'filter' => EmailFilterData::validateAndCreate([
-                    'complements' => json_decode(json_encode([
+                    'complements' => [json_decode(json_encode([
                         'key1' => 'foo'
-                    ]))
+                    ]))]
                 ])->toArray()
             ]),
             FilterEmailsByAccountInputData::validateAndCreate([
                 'account' => $this->account,
                 'filter' => EmailFilterData::validateAndCreate([
-                    'complements' => json_decode(json_encode([
+                    'complements' => [json_decode(json_encode([
                         'nonexistent_key' => 'value'
-                    ]))
+                    ]))]
                 ])->toArray()
             ]),
         ];
@@ -459,6 +459,83 @@ describe('Filter Emails By Account', function () {
             }
             $i++;
         }
+    });
+
+    it('should filter emails by complements with OR conditions', function () {
+        // Cria dois emails com complementos diferentes
+        $email1 = Email::create(
+            account_id: $this->account->getId(),
+            from: 'test@example.com',
+            to: ['recipient1@example.com'],
+            cc: [],
+            bcc: [],
+            subject: 'Test Email OR 1',
+            body: 'Body 1',
+            direction: Direction::INCOMING,
+            folder_id: $this->folder->getId(),
+            attachments: false,
+            origin: Origin::MANUAL,
+            processed_at: new \DateTime()
+        );
+
+        $email2 = Email::create(
+            account_id: $this->account->getId(),
+            from: 'test@example.com',
+            to: ['recipient2@example.com'],
+            cc: [],
+            bcc: [],
+            subject: 'Test Email OR 2',
+            body: 'Body 2',
+            direction: Direction::INCOMING,
+            folder_id: $this->folder->getId(),
+            attachments: false,
+            origin: Origin::MANUAL,
+            processed_at: new \DateTime()
+        );
+
+        $this->emailRepository->save($email1);
+        $this->emailRepository->save($email2);
+
+        DB::table('email_complements')->insert([
+            [
+                'email_id' => $email1->getId(),
+                'complement_data' => json_encode([
+                    'status' => 1,
+                    'copia' => 1
+                ]),
+                'created_at' => now(),
+            ],
+            [
+                'email_id' => $email2->getId(),
+                'complement_data' => json_encode([
+                    'status' => 0,
+                    'copia' => 2
+                ]),
+                'created_at' => now(),
+            ]
+        ]);
+
+        // Testa com condições OR: (status=1 AND copia=1) OR (status=0 AND copia=2)
+        $input = FilterEmailsByAccountInputData::validateAndCreate([
+            'account' => $this->account,
+            'filter' => EmailFilterData::validateAndCreate([
+                'complements' => [
+                    json_decode(json_encode(['status' => 1, 'copia' => 1])),
+                    json_decode(json_encode(['status' => 0, 'copia' => 2]))
+                ]
+            ])->toArray()
+        ]);
+
+        $emails = $this->filterEmailsByAccount->execute($input)->emails;
+
+        // Deve retornar ambos os emails
+        expect($emails)->toHaveCount(2);
+        
+        // Ordena por subject para ter ordem previsível
+        usort($emails, fn($a, $b) => strcmp($a->getData()->getSubject(), $b->getData()->getSubject()));
+        
+        expect($emails[0]->getData()->getSubject())->toBe('Test Email OR 1');
+        expect($emails[1]->getData()->getSubject())->toBe('Test Email OR 2');
     });
 
     it('should filter emails by multiple criteria', function () {

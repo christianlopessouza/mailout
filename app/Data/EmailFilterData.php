@@ -19,6 +19,7 @@ use Spatie\LaravelData\Attributes\Computed;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Support\Validation\ValidationContext;
 
 class EmailFilterData extends Data
 {
@@ -52,7 +53,7 @@ class EmailFilterData extends Data
         public ?Direction $direction = null,
 
         #[FilterBy(FacadesComplementsFilter::class)]
-        public ?object $complements = null,
+        public ?array $complements = null,
 
         #[FilterBy(FacadesFlagsFilter::class)]
         public ?array $flag_names = null,
@@ -65,7 +66,7 @@ class EmailFilterData extends Data
         public ?int $page = null,
     ) {}
 
-    public static function rules(): array
+    public static function rules(?ValidationContext $context = null): array
     {
         return [
             'folder_slug' => ['nullable', 'string'],
@@ -88,9 +89,10 @@ class EmailFilterData extends Data
             'order' => ['nullable', 'string', 'in:asc,desc'],
             'limit_per_page' => ['nullable', 'integer', 'min:1'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'complements' => ['nullable', function ($attribute, $value, $fail) {
-                if (!is_object($value)) {
-                    $fail('The complements field must be an object.');
+            'complements' => ['nullable', 'array'],
+            'complements.*' => ['required', function ($attribute, $value, $fail) {
+                if (!is_object($value) && !is_array($value)) {
+                    $fail('Each element in complements must be an object with key-value pairs.');
                 }
             }],
             'flag_names' => ['nullable', 'array'],

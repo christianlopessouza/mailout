@@ -425,17 +425,17 @@ describe('Filter Emails By Client', function () {
             FilterEmailsByClientInputData::validateAndCreate([
                 'client' => $this->client,
                 'filter' => EmailFilterData::validateAndCreate([
-                    'complements' => json_decode(json_encode([
+                    'complements' => [json_decode(json_encode([
                         'key1' => 'foo'
-                    ]))
+                    ]))]
                 ])->toArray()
             ]),
             FilterEmailsByClientInputData::validateAndCreate([
                 'client' => $this->client,
                 'filter' => EmailFilterData::validateAndCreate([
-                    'complements' => json_decode(json_encode([
+                    'complements' => [json_decode(json_encode([
                         'nonexistent_key' => 'value'
-                    ]))
+                    ]))]
                 ])->toArray()
             ]),
         ];

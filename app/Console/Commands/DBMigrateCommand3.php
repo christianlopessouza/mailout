@@ -50,20 +50,42 @@ class DBMigrateCommand3 extends Command
         $emailComplementRepository = new FacadesEmailComplementRepository();
 
 
-        
+
+        // $email_enviado_super = DB::connection('mysqlSMAIL')->select(
+        //     "(SELECT e.*,ec.email as email_conta
+        //     FROM email e
+        //     JOIN email_cont ec ON ec.id = e.id_conta
+        //     WHERE ec.email IN ('operacional.vitoria@superestagios.com.br','operacional@superestagios.com.br','ariene.thomaz@superestagios.com.br','jr.fagundes@superestagios.com.br','adm.vale@superestagios.com.br','superatendimento@superestagios.com.br','daniela.s@superestagios.com.br','unidade.cuiaba@superestagios.com.br','comercial.cuiaba@superestagios.com.br','celso.andrade@superestagios.com.br','operacional.caixa@superestagios.com.br','comercial@superestagios.com.br','julianatorres@superestagios.com.br','samf@superestagios.com.br','convencao@superestagios.com.br','atendimento.vix@superestagios.com.br','rh.caixa@superestagios.com.br','poliana@superestagios.com.br','poliana.modenesi@superestagios.com.br')
+        //     AND MONTH(e.data_email) = 10 AND YEAR(e.data_email) = 2025)
+        //     UNION 
+        //     (SELECT e.*,ec.email as email_conta
+        //     FROM email_arquivo e
+        //     JOIN email_cont ec ON ec.id = e.id_conta
+        //     WHERE ec.email IN ('operacional.vitoria@superestagios.com.br','operacional@superestagios.com.br','ariene.thomaz@superestagios.com.br','jr.fagundes@superestagios.com.br','adm.vale@superestagios.com.br','superatendimento@superestagios.com.br','daniela.s@superestagios.com.br','unidade.cuiaba@superestagios.com.br','comercial.cuiaba@superestagios.com.br','celso.andrade@superestagios.com.br','operacional.caixa@superestagios.com.br','comercial@superestagios.com.br','julianatorres@superestagios.com.br','samf@superestagios.com.br','convencao@superestagios.com.br','atendimento.vix@superestagios.com.br','rh.caixa@superestagios.com.br','poliana@superestagios.com.br','poliana.modenesi@superestagios.com.br')
+        //     AND MONTH(e.data_email) = 10 AND YEAR(e.data_email) = 2025)
+        //     ORDER BY id DESC
+        //     LIMIT 100000000
+        //     "
+        // );
+
+
+
         $email_enviado_super = DB::connection('mysqlSMAIL')->select(
-            "SELECT e.*,ec.email as email_conta
+            "(SELECT e.*,ec.email as email_conta
             FROM email e
-            LEFT JOIN email_cont ec ON ec.id = e.id_conta
-            WHERE ec.email IN ('operacional.vitoria@superestagios.com.br','operacional@superestagios.com.br','ariene.thomaz@superestagios.com.br','jr.fagundes@superestagios.com.br','adm.vale@superestagios.com.br','superatendimento@superestagios.com.br','daniela.s@superestagios.com.br','unidade.cuiaba@superestagios.com.br','comercial.cuiaba@superestagios.com.br','celso.andrade@superestagios.com.br','operacional.caixa@superestagios.com.br','comercial@superestagios.com.br','julianatorres@superestagios.com.br','samf@superestagios.com.br','convencao@superestagios.com.br','atendimento.vix@superestagios.com.br','rh.caixa@superestagios.com.br','poliana@superestagios.com.br','poliana.modenesi@superestagios.com.br')
-            AND MONTH(e.data_email) = 10 AND YEAR(e.data_email) = 2025
-            ORDER BY e.id DESC
+            JOIN email_cont ec ON ec.id = e.id_conta
+            WHERE ec.email IN ('unidade.cuiaba@superestagios.com.br')
+            AND MONTH(e.data_email) = 10 AND YEAR(e.data_email) = 2025)
+            UNION 
+            (SELECT e.*,ec.email as email_conta
+            FROM email_arquivo e
+            JOIN email_cont ec ON ec.id = e.id_conta
+            WHERE ec.email IN ('unidade.cuiaba@superestagios.com.br')
+            AND MONTH(e.data_email) = 10 AND YEAR(e.data_email) = 2025)
+            ORDER BY id DESC
             LIMIT 100000000
             "
         );
-
-
-
 
         foreach ($email_enviado_super as $key => $email) {
 
@@ -98,7 +120,7 @@ class DBMigrateCommand3 extends Command
                 ->first();
 
             if (!$existeGSmail) {
-                if (strpos($email_from, 'superestagios.com.br') !== false) {
+                if ($email_from == $email->email_conta) {
                     $direction = Direction::OUTGOING;
                 } else {
                     $direction = Direction::INCOMING;
@@ -116,19 +138,19 @@ class DBMigrateCommand3 extends Command
                 }
 
                 // verifica se a conta existe
-                if (array_key_exists($email_from, $accounts_cache)) {
-                    $id_conta = $accounts_cache[$email_from];
+                if (array_key_exists($email->email_conta, $accounts_cache)) {
+                    $id_conta = $accounts_cache[$email->email_conta];
                 } else {
                     $verificaEmailConta = DB::connection('pgsql')
                         ->table('accounts')
                         ->select('id')
-                        ->where('email_address', '=', $email_from)
+                        ->where('email_address', '=', $email->email_conta)
                         ->first();
 
                     if (!$verificaEmailConta) {
                         $data_email = (int) new DateTime($email->data_email)->format('Uv');
                         $account = Account::create(
-                            email_address: $email_from,
+                            email_address: $email->email_conta,
                             password: Crypto::encrypt('BCNsddU3IeXeOiXGcUk3ie0d7YYabzi9+gzgJ2Vdix6T'),
                             host: 'email-smtp.us-east-1.amazonaws.com',
                             port: 587,
@@ -141,14 +163,14 @@ class DBMigrateCommand3 extends Command
                         $id_conta = $verificaEmailConta->id;
                     }
 
-                    $accounts_cache[$email_from] = $id_conta;
+                    $accounts_cache[$email->email_conta] = $id_conta;
                 }
 
                 $email_to = preg_split('/[;,\-\s]+/', $email->to_email, -1, PREG_SPLIT_NO_EMPTY);
 
                 if (!count($email_to)) {
                     if ($direction == Direction::INCOMING) {
-                        $email_to = [$email_from];
+                        $email_to = [$email->email_conta];
                     } else {
                         $email_to = [];
                     }
@@ -201,7 +223,7 @@ class DBMigrateCommand3 extends Command
                 $email->texto = trim($email->texto) === '' ? '(sem corpo)' : trim($email->texto);
 
                 $resolved_complements = null;
-               
+
                 $emailEntity = Email::create(
                     id: $this->uuidv7_from_timestamp($data_email),
                     account_id: $id_conta,
