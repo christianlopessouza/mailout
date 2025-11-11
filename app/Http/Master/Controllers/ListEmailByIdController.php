@@ -24,7 +24,7 @@ class ListEmailByIdController implements Controller
 
             $email = $this->listEmailById->execute($input);
 
-            return response()->json(EmailPresenter::present($email), 200);
+            return response()->json(EmailPresenter::present($email), 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_IGNORE);
         } catch (\Exception $th) {
             return response()->json([
                 'message' => $th->getMessage()

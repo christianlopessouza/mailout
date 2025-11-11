@@ -36,6 +36,7 @@ class FilterEmailsByAccountController implements Controller
                 'order' => $request->input('order'),
                 'limit_per_page' => $request->input('limit_per_page'),
                 'complements' => json_decode(json_encode($request->input('complements'))),
+                'account_id' => $request->input('account_id'),
                 'flag_names' => $request->input('flag_names'),
             ]);
             
@@ -53,7 +54,7 @@ class FilterEmailsByAccountController implements Controller
             return response()->json([
                 'emails' => $emails,
                 'total' => $result->total
-            ], 200);
+            ], 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_IGNORE);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()

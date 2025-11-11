@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAccountIdFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAddressFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesBodyFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesComplementsFilter;
@@ -27,6 +28,7 @@ class EmailFilterServiceProvider extends ServiceProvider
             FacadesAddressFilter::class,
             FacadesDirectionFilter::class,
             FacadesComplementsFilter::class,
+            FacadesAccountIdFilter::class,
             FacadesFlagsFilter::class,
             FacadesOrderFilter::class,
         ], 'email.filters');

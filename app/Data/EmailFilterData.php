@@ -4,6 +4,7 @@ namespace App\Data;
 
 use App\Domain\Enums\Direction;
 use App\Infrastructure\Persistence\FilterBy;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAccountIdFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAddressFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesBodyFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesComplementsFilter;
@@ -55,6 +56,9 @@ class EmailFilterData extends Data
         #[FilterBy(FacadesComplementsFilter::class)]
         public ?array $complements = null,
 
+        #[FilterBy(FacadesAccountIdFilter::class)]
+        public ?array $account_id = null,
+
         #[FilterBy(FacadesFlagsFilter::class)]
         public ?array $flag_names = null,
 
@@ -95,6 +99,8 @@ class EmailFilterData extends Data
                     $fail('Each element in complements must be an object with key-value pairs.');
                 }
             }],
+            'account_id' => ['nullable', 'array'],
+            'account_id.*' => ['required', 'string'],
             'flag_names' => ['nullable', 'array'],
             'flag_names.*' => ['string'],
         ];

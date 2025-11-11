@@ -187,6 +187,15 @@ class Email
 
     public function toArray(): array
     {
+        // Sanitiza o body para garantir que não quebre o JSON
+        $body = $this->data->getBody();
+        if (is_string($body)) {
+            // Remove caracteres de controle inválidos, exceto quebras de linha e tabs
+            $body = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $body);
+            // Garante encoding UTF-8 válido
+            $body = mb_convert_encoding($body, 'UTF-8', 'UTF-8');
+        }
+
         return [
             'id' => $this->id,
             'account_id' => $this->account_id,
@@ -195,7 +204,7 @@ class Email
             'cc' => $this->data->getCc(),
             'bcc' => $this->data->getBcc(),
             'subject' => $this->data->getSubject(),
-            'body' => $this->data->getBody(),
+            'body' => $body,
             'attachments' => $this->data->getAttachments(),
             'reply_to' => $this->data->getReplyTo(),
             'direction' => $this->direction->value,

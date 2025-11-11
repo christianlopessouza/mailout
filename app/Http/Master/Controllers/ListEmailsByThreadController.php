@@ -31,7 +31,7 @@ class ListEmailsByThreadController implements Controller
 
             return response()->json([
                 'emails' => $emails_formatted
-            ], 200);
+            ], 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_IGNORE);
         } catch (\Exception $th) {
             return response()->json([
                 'message' => $th->getMessage()
