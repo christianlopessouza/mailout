@@ -38,7 +38,8 @@ class SendEmailByClient
         $send_email = $this->sendEmailService->execute(
             SendEmailServiceData::validateAndCreate([
                 'account' => $account,
-                'email' => $input->email->toArray()
+                'email' => $input->email->toArray(),
+                'client' => $client
             ])
         );
 

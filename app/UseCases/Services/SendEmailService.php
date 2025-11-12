@@ -90,14 +90,16 @@ class SendEmailService
             }
         }
 
+        $client_id = $data->client?->getId() ?? $account->getId();
+        
         if ($email_input->complements) {
             $resolved_complements = $this->emailComplementService->applyTemplateAndSave(
                 complements: $email_input->complements,
-                client_id:  $account->getId()
+                client_id: $client_id
             );
         } else {
             // Se não há complements específicos, verifica se existe template para o cliente
-            $template = $this->emailComplementTemplateRepository->findByClientId($account->getId());
+            $template = $this->emailComplementTemplateRepository->findByClientId($client_id);
             if ($template) {
                 // Usa o template como complement quando não há complement específico
                 $resolved_complements = $template->getTemplate();
