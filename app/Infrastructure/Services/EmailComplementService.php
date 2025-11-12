@@ -36,7 +36,8 @@ class EmailComplementService
                 $template->{$key} = $complements_values->{$key};
             } else {
                 // Se o valor não foi informado, usa o valor padrão baseado no tipo
-                $template->{$key} = $this->getDefaultValueByType($type);
+                $typeString = is_string($type) ? $type : (string) $type;
+                $template->{$key} = $this->getDefaultValueByType($typeString);
             }
         }
 
@@ -45,10 +46,11 @@ class EmailComplementService
 
     private function getDefaultValueByType(string $type): string|int|bool
     {
-        return match ($type) {
+        $typeNormalized = strtolower(trim($type));
+        return match ($typeNormalized) {
             'string' => '',
-            'int' => 0,
-            'boolean' => false,
+            'int', 'integer' => 0,
+            'boolean', 'bool' => false,
             default => '',
         };
     }
