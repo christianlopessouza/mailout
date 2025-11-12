@@ -44,7 +44,7 @@ class SendEmailController
                     'body' => $request->input('body'),
                     'attachments' => $attachments,
                     'origin' => $request->input('origin'),
-                    'complements' => $request->input('complement'),
+                    'complements' => $request->input('complements') ? (object) $request->input('complements') : null,
                     'reply_to' => $request->input('reply_to'),
                     'thread_id' => $request->input('thread_id'),
                 ]
