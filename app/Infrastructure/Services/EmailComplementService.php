@@ -3,7 +3,6 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Errors\MissingEmailComplementException;
 use App\Infrastructure\Persistence\EmailComplementTemplateRepository;
 use App\Domain\Entities\EmailComplementTemplate;
 use App\Infrastructure\Persistence\EmailComplementDTO;
@@ -31,14 +30,26 @@ class EmailComplementService
 
     private function resolveTemplate(object $template, object $complements_values): object
     {
-        foreach ($template as $key => $_) {
-            if (!property_exists($complements_values, $key)) {
-                throw new MissingEmailComplementException("Missing key: $key");
+        foreach ($template as $key => $type) {
+            if (property_exists($complements_values, $key)) {
+                // Se o valor foi informado, usa o valor informado
+                $template->{$key} = $complements_values->{$key};
+            } else {
+                // Se o valor não foi informado, usa o valor padrão baseado no tipo
+                $template->{$key} = $this->getDefaultValueByType($type);
             }
-
-            $template->{$key} = $complements_values->{$key};
         }
 
         return $template;
+    }
+
+    private function getDefaultValueByType(string $type): string|int|bool
+    {
+        return match ($type) {
+            'string' => '',
+            'int' => 0,
+            'boolean' => false,
+            default => '',
+        };
     }
 }
