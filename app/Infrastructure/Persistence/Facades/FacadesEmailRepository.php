@@ -93,6 +93,54 @@ class FacadesEmailRepository implements EmailRepository
         $this->saveSearchTokens($email_tokens);
     }
 
+    public function update(string $id, array $data): void
+    {
+        $updateData = [];
+        
+        if (isset($data['account_id'])) {
+            $updateData['account_id'] = $data['account_id'];
+        }
+        
+        if (isset($data['folder_id'])) {
+            $updateData['folder_id'] = $data['folder_id'];
+        }
+        
+        if (isset($data['external_id'])) {
+            $updateData['external_id'] = $data['external_id'];
+        }
+        
+        if (isset($data['deleted'])) {
+            $updateData['deleted'] = $data['deleted'];
+        }
+        
+        if (isset($data['failed'])) {
+            $updateData['failed'] = $data['failed'];
+        }
+        
+        if (isset($data['read'])) {
+            $updateData['read'] = $data['read'];
+        }
+        
+        if (isset($data['read_at'])) {
+            $updateData['read_at'] = $data['read_at'] instanceof \DateTime 
+                ? $data['read_at']->format('Y-m-d H:i:s') 
+                : ($data['read_at'] ?: null);
+        }
+        
+        if (isset($data['processed_at'])) {
+            $updateData['processed_at'] = $data['processed_at'] instanceof \DateTime 
+                ? $data['processed_at']->format('Y-m-d H:i:s') 
+                : $data['processed_at'];
+        }
+        
+        if (!empty($updateData)) {
+            $updateData['updated_at'] = now();
+            DB::table('emails')
+                ->where('id', $id)
+                ->update($updateData);
+        }
+    }
+
     public function findById(string $id): ?Email
     {
         $data = DB::table('emails')

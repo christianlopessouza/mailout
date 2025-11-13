@@ -24,6 +24,50 @@ class InMemoryEmailRepository implements EmailRepository
             $this->data[$key] = $email;
         }
     }
+
+    public function update(string $id, array $data): void
+    {
+        $email = $this->findById($id);
+        if (!$email) {
+            return;
+        }
+
+        // Criar novo Email com os valores atualizados
+        $account_id = $data['account_id'] ?? $email->getAccountId();
+        $folder_id = $data['folder_id'] ?? $email->getFolderId();
+        $external_id = $data['external_id'] ?? $email->getExternalId();
+        $deleted = $data['deleted'] ?? $email->getDeleted();
+        $failed = $data['failed'] ?? $email->getFailed();
+        $read = $data['read'] ?? $email->getRead();
+        $read_at = isset($data['read_at']) ? $data['read_at'] : $email->getReadAt();
+        $processed_at = isset($data['processed_at']) ? $data['processed_at'] : $email->getProcessedAt();
+
+        $updatedEmail = Email::create(
+            id: $email->getId(),
+            account_id: $account_id,
+            from: $email->getData()->getFrom(),
+            to: $email->getData()->getTo(),
+            subject: $email->getData()->getSubject(),
+            body: $email->getData()->getBody(),
+            direction: $email->getDirection(),
+            folder_id: $folder_id,
+            attachments: $email->getData()->getAttachments(),
+            cc: $email->getData()->getCc(),
+            bcc: $email->getData()->getBcc(),
+            origin: $email->getOrigin(),
+            read: $read,
+            read_at: $read_at,
+            thread_id: $email->getThreadId(),
+            processed_at: $processed_at,
+            external_id: $external_id,
+            deleted: $deleted,
+            failed: $failed,
+            reply_to: $email->getData()->getReplyTo(),
+            complements: $email->getComplements()
+        );
+
+        $this->save($updatedEmail);
+    }
     public function list(EmailFilter $filter): array
     {
         $emails = array_slice($this->data, $filter->page - 1, $filter->limit_per_page);

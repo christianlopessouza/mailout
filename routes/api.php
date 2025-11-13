@@ -13,6 +13,7 @@ use App\Http\Master\Controllers\ListEmailsByThreadController;
 use App\Http\Master\Controllers\SaveEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Master\Controllers\UpdateEmailComplementController;
+use App\Http\Master\Controllers\UpdateEmailController;
 
 // Consultas exteriores
 Route::middleware(['auth.public.client'])->prefix('public/client')->group(function () {
@@ -26,6 +27,7 @@ Route::middleware(['auth.public.client'])->prefix('public/client')->group(functi
     // Route::get('/emails/batch/send/{amount}', [SendBatchController::class, 'sendBatch']);
     Route::get('/list-emails-thread/{thread_id}', ListEmailsByThreadController::class);
     Route::post('/update-email-complement/{id}', UpdateEmailComplementController::class);
+    Route::post('/update-email/{id}', UpdateEmailController::class);
 });
 
 Route::middleware(['auth.public.account'])->prefix('public/account')->group(function () {

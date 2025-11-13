@@ -11,6 +11,7 @@ interface EmailRepository
 {
     public function save(Email $email): void;
 
+    public function update(string $id, array $data): void;
 
     public function findById(string $id): ?Email;
 
