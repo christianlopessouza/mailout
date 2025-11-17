@@ -11,6 +11,7 @@ use App\Http\Master\Controllers\ListEmailByIdController;
 use App\Http\Master\Controllers\ListEmailsByThreadController;
 // use App\Http\Master\Controllers\ListEmailsByThreadIdController;
 use App\Http\Master\Controllers\SaveEmailController;
+use App\Http\Master\Controllers\ListActiveAccountsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Master\Controllers\UpdateEmailComplementController;
 use App\Http\Master\Controllers\UpdateEmailController;
@@ -39,6 +40,13 @@ Route::middleware(['auth.public.account'])->prefix('public/account')->group(func
 Route::get('/ping', function () {
     return response()->json(['ok' => true,"v"=>"1.0.0"]);
 });
+
+// Endpoint interno para o worker IDLE buscar contas ativas
+// Pode ser protegido com token interno se necessário
+Route::get('/accounts/active', ListActiveAccountsController::class);
+
+// Rota interna para IDLE worker salvar emails (sem autenticação de cliente)
+Route::post('/internal/save-email', \App\Http\Master\Controllers\SaveEmailFromIdleController::class);
 
 // Rota temporária para teste (sem middleware)
 Route::post('/test-update-email-complement/{id}', UpdateEmailComplementController::class);

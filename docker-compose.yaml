@@ -12,10 +12,9 @@ services:
       - docker/.env.docker
     depends_on:
       - postgres
+      - redis
     volumes:
       - .:/var/www
-
-
 
   postgres:
     image: postgres:15
@@ -30,5 +29,36 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:7-alpine
+    container_name: smail_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  idler-worker:
+    build:
+      context: .
+      dockerfile: idler/Dockerfile
+    container_name: smail_idler_worker
+    restart: unless-stopped
+    env_file:
+      - docker/.env.docker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PHP_API_URL=http://app:80/api
+      - INTERNAL_API_TOKEN=${INTERNAL_API_TOKEN:-}
+      - ACCOUNT_REFRESH_INTERVAL=3600000
+    depends_on:
+      - redis
+      - app
+    networks:
+      - default
+
 volumes:
   pgdata:
+  redis_data:

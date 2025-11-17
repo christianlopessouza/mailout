@@ -24,3 +24,9 @@ yarn-error.log
 /.zed
 logs
 .env.local
+
+# IDLE Worker
+/idler/node_modules
+/idler/dist
+/idler/*.log
+/idler/.env
