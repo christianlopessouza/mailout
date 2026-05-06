@@ -1,0 +1,18 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "instructions": [
+        "AGENTS.md",
+        ".claude/personas/PM-marco.md",
+        ".claude/personas/BA-diana.md",
+        ".claude/personas/ARCH-rafael.md",
+        ".claude/personas/DBA-sonia.md",
+        ".claude/personas/DEV-lucas.md",
+        ".claude/personas/QA-carol.md",
+        ".claude/personas/OPS-felipe.md",
+        ".claude/personas/SEC-alex.md",
+        ".claude/personas/TM-theo.md",
+        ".claude/personas/RAG-architect.md",
+        ".claude/personas/FOOL-the-fool.md",
+        ".claude/personas/PROF-professor.md"
+    ]
+}
