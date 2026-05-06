@@ -7,24 +7,29 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "test": "jest"
   },
   "dependencies": {
+    "@types/amqplib": "^0.10.8",
+    "amqplib": "^1.0.5",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
     "imap": "^0.8.19",
     "ioredis": "^5.3.2",
-    "mailparser": "^3.6.5",
-    "axios": "^1.6.0",
-    "dotenv": "^16.3.1"
+    "mailparser": "^3.6.5"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
     "@types/imap": "^0.8.40",
+    "@types/jest": "^30.0.0",
     "@types/mailparser": "^3.4.4",
-    "typescript": "^5.3.3",
-    "ts-node": "^10.9.2"
+    "@types/node": "^20.10.0",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=20.0.0"
   }
 }
-

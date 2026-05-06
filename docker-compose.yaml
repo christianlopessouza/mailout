@@ -39,6 +39,19 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: smail_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
   idler-worker:
     build:
       context: .
@@ -62,3 +75,4 @@ services:
 volumes:
   pgdata:
   redis_data:
+  rabbitmq_data:
