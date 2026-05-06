@@ -1,32 +1,25 @@
-import axios, { AxiosInstance } from 'axios';
+import { IHttpClient } from '../interfaces/IHttpClient';
 import { AccountConfig } from '../types/account.types';
 
 export class AccountFetcherService {
-  private apiClient: AxiosInstance;
+  private httpClient: IHttpClient;
 
-  constructor(apiUrl: string, apiToken?: string) {
-    this.apiClient = axios.create({
-      baseURL: apiUrl,
-      timeout: 30000,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(apiToken && { 'Authorization': `Bearer ${apiToken}` }),
-      },
-    });
+  constructor(httpClient: IHttpClient) {
+    this.httpClient = httpClient;
   }
 
   async fetchActiveAccounts(): Promise<AccountConfig[]> {
     try {
-      console.log('📋 Buscando contas ativas...');
+      console.log('Fetching active accounts...');
       
-      const response = await this.apiClient.get('/accounts/active');
+      const response = await this.httpClient.get<any[]>('/accounts/active');
       
-      if (!response.data || !Array.isArray(response.data)) {
-        console.warn('⚠️ Resposta inválida da API');
+      if (!Array.isArray(response)) {
+        console.warn('Invalid API response');
         return [];
       }
 
-      const accounts: AccountConfig[] = response.data.map((acc: any) => ({
+      const accounts: AccountConfig[] = response.map((acc: any) => ({
         id: acc.id,
         email: acc.email_address,
         password: acc.password,
@@ -36,21 +29,15 @@ export class AccountFetcherService {
         username: acc.username || acc.email_address,
       }));
 
-      console.log(`✅ ${accounts.length} conta(s) encontrada(s)`);
+      console.log(`${accounts.length} account(s) found`);
       return accounts;
     } catch (error: any) {
-      console.error('❌ Erro ao buscar contas:', error.message);
-      if (error.response) {
-        console.error('Status:', error.response.status);
-        console.error('Data:', error.response.data);
-      }
+      console.error('Error fetching accounts:', error.message);
       return [];
     }
   }
 
   async refreshAccounts(): Promise<AccountConfig[]> {
-    // Método para atualizar lista de contas periodicamente
     return this.fetchActiveAccounts();
   }
 }
-
