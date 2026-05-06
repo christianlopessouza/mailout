@@ -14,6 +14,7 @@ use App\Helper\Crypto;
 use App\Infrastructure\Persistence\AccountRepository;
 use App\Infrastructure\Persistence\ClientRepository;
 use App\Infrastructure\Services\EmailAuthenticationService;
+use App\Infrastructure\Services\RabbitMQService;
 use App\Util\UUID;
 
 class RegisterAccount
@@ -21,8 +22,10 @@ class RegisterAccount
     public function __construct(
         private readonly AccountRepository $accountRepository,
         private readonly ClientRepository $clientRepository,
-        private readonly EmailAuthenticationService $emailAuthenticationService
+        private readonly EmailAuthenticationService $emailAuthenticationService,
+        private readonly RabbitMQService $rabbitMQService
     ) {}
+
     public function execute(RegisterAccountInputData $data): RegisterAccountOutputData
     {
         if (!filter_var($data->email_address, FILTER_VALIDATE_EMAIL)) {
@@ -67,6 +70,12 @@ class RegisterAccount
         );
 
         $this->accountRepository->save($account);
+
+        // Notify worker about new account
+        $this->rabbitMQService->publish('account_sync_queue', [
+            'action' => 'account_created',
+            'account_id' => $account->getId()
+        ]);
 
         $output = new RegisterAccountOutputData(
             account: $account
