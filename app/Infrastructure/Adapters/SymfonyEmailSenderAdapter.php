@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Infrastructure\Services;
+namespace App\Infrastructure\Adapters;
 
+use App\Domain\Contracts\IAttachmentService;
+use App\Domain\Contracts\IEmailSenderService;
 use App\Data\EmailSenderSend;
 use Exception;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as SymfonyEmail;
+use App\Infrastructure\Services\SymfonyMailerHelper;
 
-class SymfonyEmailSenderService implements EmailSenderService
+class SymfonyEmailSenderAdapter implements IEmailSenderService
 {
     public function __construct(
-        private readonly AttachmentService $attachmentService,
+        private readonly IAttachmentService $attachmentService,
     ) {}
     public function send(EmailSenderSend $params): bool
     {

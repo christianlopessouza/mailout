@@ -2,10 +2,10 @@
 
 namespace App\Infrastructure\Persistence\Facades\EmailFilters;
 
-use App\Infrastructure\Persistence\EmailFilter;
+use App\Domain\Contracts\IFilter;
 use Illuminate\Database\Query\Builder;
 
-class FacadesReadFilter implements EmailFilter
+class FacadesReadFilter implements IFilter
 {
     public function apply(mixed $query, mixed $value): mixed
     {

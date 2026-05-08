@@ -16,15 +16,27 @@ use App\Infrastructure\Persistence\Facades\FacadesEmailComplementTemplateReposit
 use App\Infrastructure\Persistence\Facades\FacadesEmailRepository;
 use App\Infrastructure\Persistence\Facades\FacadesFolderRepository;
 use App\Infrastructure\Persistence\FolderRepository;
-use App\Infrastructure\Services\AttachmentService;
-use App\Infrastructure\Services\EmailAuthenticationService;
-use App\Infrastructure\Services\EmailSenderService;
-use App\Infrastructure\Services\S3AttachmentService;
-use App\Infrastructure\Services\SymfonyEmailAuthenticationService;
-use App\Infrastructure\Services\SymfonyEmailSenderService;
+use App\Domain\Contracts\IAttachmentService;
+use App\Domain\Contracts\IEmailAuthenticationService;
+use App\Domain\Contracts\IEmailSenderService;
+use App\Infrastructure\Adapters\S3AttachmentAdapter;
+use App\Infrastructure\Adapters\SymfonyEmailAuthenticationAdapter;
+use App\Infrastructure\Adapters\SymfonyEmailSenderAdapter;
 use App\UseCases\FilterEmailsByAccount;
 use App\UseCases\FilterEmailsByClient;
-use App\UseCases\Services\EmailFiltersService;
+use App\Infrastructure\Support\EmailFiltersMapper;
+use App\Infrastructure\Support\FilterRegistry;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesFolderFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesProcessDateFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesReadFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesBodyFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesSubjectFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAddressFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesDirectionFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesComplementsFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAccountIdFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesFlagsFilter;
+use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesOrderFilter;
 use Aws\S3\S3Client;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\DB;
@@ -38,25 +50,41 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(EmailSenderService::class, SymfonyEmailSenderService::class);
+        $this->app->bind(IEmailSenderService::class, SymfonyEmailSenderAdapter::class);
         $this->app->bind(EmailRepository::class,  FacadesEmailRepository::class);
         $this->app->bind(FolderRepository::class, FacadesFolderRepository::class);
         $this->app->bind(AccountRepository::class, FacadesAccountRepository::class);
         $this->app->bind(ClientRepository::class, FacadesClientRepository::class);
         $this->app->bind(EmailComplementRepository::class, FacadesEmailComplementRepository::class);
         $this->app->bind(EmailComplementTemplateRepository::class, FacadesEmailComplementTemplateRepository::class);
-        $this->app->bind(AttachmentService::class, function () {
+        $this->app->bind(IAttachmentService::class, function () {
             $config = config('services.s3');
             $s3Client = new S3Client($config);
 
-            return new S3AttachmentService($s3Client);
+            return new S3AttachmentAdapter($s3Client);
         });
         $this->app->bind(AttachmentRepository::class, FacadesAttachmentRepository::class);
-        $this->app->bind(EmailAuthenticationService::class, SymfonyEmailAuthenticationService::class);
+        $this->app->bind(IEmailAuthenticationService::class, SymfonyEmailAuthenticationAdapter::class);
         $this->app->bind(FilterEmailsByAccount::class, FilterEmailsByAccount::class);
         $this->app->bind(FilterEmailsByClient::class, FilterEmailsByClient::class);
-        $this->app->bind(EmailFiltersService::class, function ($app) {
-            return new EmailFiltersService($app->tagged('email.filters'));
+        $this->app->singleton(FilterRegistry::class, function ($app) {
+            $registry = new FilterRegistry();
+            $registry->register('folder', $app->make(FacadesFolderFilter::class));
+            $registry->register('process_date', $app->make(FacadesProcessDateFilter::class));
+            $registry->register('read_date', $app->make(FacadesReadFilter::class));
+            $registry->register('body', $app->make(FacadesBodyFilter::class));
+            $registry->register('subject', $app->make(FacadesSubjectFilter::class));
+            $registry->register('address', $app->make(FacadesAddressFilter::class));
+            $registry->register('direction', $app->make(FacadesDirectionFilter::class));
+            $registry->register('complements', $app->make(FacadesComplementsFilter::class));
+            $registry->register('account', $app->make(FacadesAccountIdFilter::class));
+            $registry->register('flags', $app->make(FacadesFlagsFilter::class));
+            $registry->register('order', $app->make(FacadesOrderFilter::class));
+            return $registry;
+        });
+
+        $this->app->bind(EmailFiltersMapper::class, function ($app) {
+            return new EmailFiltersMapper($app->make(FilterRegistry::class));
         });
     }
 

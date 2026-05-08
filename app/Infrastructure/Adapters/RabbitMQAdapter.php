@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Infrastructure\Services;
+namespace App\Infrastructure\Adapters;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class RabbitMQService
+class RabbitMQAdapter
 {
     private $connection;
     private $channel;

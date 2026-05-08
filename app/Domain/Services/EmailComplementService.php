@@ -1,7 +1,6 @@
 <?php
 
-
-namespace App\Infrastructure\Services;
+namespace App\Domain\Services;
 
 use App\Infrastructure\Persistence\EmailComplementTemplateRepository;
 use App\Domain\Entities\EmailComplementTemplate;

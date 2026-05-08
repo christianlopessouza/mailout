@@ -14,7 +14,7 @@ use App\Infrastructure\Persistence\Facades\FacadesClientRepository;
 use App\Infrastructure\Persistence\Facades\FacadesEmailRepository;
 use App\Infrastructure\Persistence\Facades\FacadesFolderRepository;
 use App\UseCases\FilterEmailsByClient;
-use App\UseCases\Services\EmailFiltersService;
+use App\Infrastructure\Support\EmailFiltersMapper;
 use App\Util\UUID;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -186,7 +186,7 @@ describe('Filter Emails By Client', function () {
         $this->email4 = $email4;
 
         $filters = app()->tagged('email.filters');
-        $this->emailFiltersService = new EmailFiltersService($filters);
+        $this->emailFiltersService = new EmailFiltersMapper($filters);
         
         $this->useCase = new FilterEmailsByClient(
             $this->emailRepository,

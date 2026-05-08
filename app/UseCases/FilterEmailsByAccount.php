@@ -6,22 +6,22 @@ use App\Data\Input\FilterEmailsByAccountInputData;
 use App\Data\Output\FilterEmailsOutputData;
 use App\Data\PaginationData;
 use App\Infrastructure\Persistence\EmailRepository;
-use App\UseCases\Services\EmailFiltersService;
-use Illuminate\Contracts\Container\Container;
+use App\Infrastructure\Support\EmailFiltersMapper;
 
 class FilterEmailsByAccount
 {
     public function __construct(
         private readonly EmailRepository $emailRepository,
-        private readonly EmailFiltersService $emailFiltersService
-    ) {}
+        private readonly EmailFiltersMapper $emailFiltersService
+    ) {
+    }
 
     public function execute(FilterEmailsByAccountInputData $input): FilterEmailsOutputData
     {
         $filter = $input->filter;
         $account = $input->account;
 
-        $filtersToApply = $this->emailFiltersService->resolveFiltersFromDTO($filter);
+        $filtersToApply = $this->emailFiltersService->resolve($filter);
 
         $pagination = PaginationData::validateAndCreate([
             'perPage' => $filter->limit_per_page,

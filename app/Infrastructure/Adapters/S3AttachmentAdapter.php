@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Infrastructure\Services;
+namespace App\Infrastructure\Adapters;
 
+use App\Domain\Contracts\IAttachmentService;
 use App\Domain\Entities\Attachment;
-use App\Infrastructure\Services\AttachmentService;
 use App\Util\File;
 use Aws\S3\S3Client;
 
-class S3AttachmentService implements AttachmentService
+class S3AttachmentAdapter implements IAttachmentService
 {
     public function __construct(
         private readonly S3Client $s3Client
@@ -15,7 +15,6 @@ class S3AttachmentService implements AttachmentService
 
     public function get(Attachment $attachment): string
     {
-        $file_extension = pathinfo($attachment->getFilename(), PATHINFO_EXTENSION);
         $result = $this->s3Client->getObject([
             'Bucket' => $_ENV['AWS_BUCKET'],
             'Key'    => $_ENV['AWS_ATTACHMENTS_PATH'] . '/' . File::customFileName(
@@ -37,8 +36,6 @@ class S3AttachmentService implements AttachmentService
 
     public function store(string $filepath, Attachment $attachment): void
     {
-        $key = $attachment->getFilename();
-
         if (!file_exists($filepath)) {
             throw new \RuntimeException("File not found: {$filepath}");
         }

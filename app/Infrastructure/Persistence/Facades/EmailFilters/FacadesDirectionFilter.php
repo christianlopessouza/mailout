@@ -3,10 +3,10 @@
 namespace App\Infrastructure\Persistence\Facades\EmailFilters;
 
 use App\Domain\Enums\Direction;
-use App\Infrastructure\Persistence\EmailFilter;
+use App\Domain\Contracts\IFilter;
 use Illuminate\Database\Query\Builder;
 
-class FacadesDirectionFilter implements EmailFilter
+class FacadesDirectionFilter implements IFilter
 {
     public function apply(mixed $query, mixed $value): mixed
     {

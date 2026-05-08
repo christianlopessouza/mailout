@@ -6,13 +6,13 @@ use App\Data\Input\FilterEmailsByClientInputData;
 use App\Data\Output\FilterEmailsOutputData;
 use App\Data\PaginationData;
 use App\Infrastructure\Persistence\EmailRepository;
-use App\UseCases\Services\EmailFiltersService;
+use App\Infrastructure\Support\EmailFiltersMapper;
 
 class FilterEmailsByClient
 {
     public function __construct(
         private readonly EmailRepository $emailRepository,
-        private readonly EmailFiltersService $emailFiltersService
+        private readonly EmailFiltersMapper $emailFiltersService
     ) {}
 
     public function execute(FilterEmailsByClientInputData $input): FilterEmailsOutputData
@@ -24,7 +24,7 @@ class FilterEmailsByClient
             throw new \InvalidArgumentException('Flag names are not supported for client filtering.');
         }
 
-        $filtersToApply = $this->emailFiltersService->resolveFiltersFromDTO($filter);
+        $filtersToApply = $this->emailFiltersService->resolve($filter);
 
         $pagination = PaginationData::validateAndCreate([
             'perPage' => $filter->limit_per_page,

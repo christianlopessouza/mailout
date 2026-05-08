@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Services;
+namespace App\Domain\Services;
 
 use App\Domain\Entities\EmailQueue;
 use App\Infrastructure\Persistence\Facades\FacadesEmailQueueRepository;

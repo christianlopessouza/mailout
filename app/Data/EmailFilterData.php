@@ -3,18 +3,7 @@
 namespace App\Data;
 
 use App\Domain\Enums\Direction;
-use App\Infrastructure\Persistence\FilterBy;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAccountIdFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesAddressFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesBodyFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesComplementsFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesDirectionFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesFlagsFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesFolderFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesOrderFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesProcessDateFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesReadFilter;
-use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesSubjectFilter;
+use App\Infrastructure\Support\Filter;
 use Illuminate\Validation\Rule;
 use Spatie\LaravelData\Attributes\Computed;
 use Spatie\LaravelData\Attributes\WithCast;
@@ -25,7 +14,7 @@ use Spatie\LaravelData\Support\Validation\ValidationContext;
 class EmailFilterData extends Data
 {
     public function __construct(
-        #[FilterBy(FacadesFolderFilter::class)]
+        #[Filter('folder')]
         public ?string $folder_slug = null,
 
         // These properties are tagged with the getter: getProcessDateFilter
@@ -41,25 +30,25 @@ class EmailFilterData extends Data
         #[WithCast(DateTimeInterfaceCast::class, ['Y-m-d', \DateTime::ATOM])]
         public ?\DateTime $read_end_date = null,
 
-        #[FilterBy(FacadesBodyFilter::class)]
+        #[Filter('body')]
         public ?string $body_contains = null,
 
-        #[FilterBy(FacadesSubjectFilter::class)]
+        #[Filter('subject')]
         public ?string $subject_contains = null,
 
-        #[FilterBy(FacadesAddressFilter::class)]
+        #[Filter('address')]
         public ?string $email_address = null,
 
-        #[FilterBy(FacadesDirectionFilter::class)]
+        #[Filter('direction')]
         public ?Direction $direction = null,
 
-        #[FilterBy(FacadesComplementsFilter::class)]
+        #[Filter('complements')]
         public ?array $complements = null,
 
-        #[FilterBy(FacadesAccountIdFilter::class)]
+        #[Filter('account')]
         public ?array $account_id = null,
 
-        #[FilterBy(FacadesFlagsFilter::class)]
+        #[Filter('flags')]
         public ?array $flag_names = null,
 
         // These properties are tagged with the getter: getOrderFilter
@@ -107,7 +96,7 @@ class EmailFilterData extends Data
     }
 
     #[Computed]
-    #[FilterBy(FacadesProcessDateFilter::class)]
+    #[Filter('process_date')]
     public function getProcessDateFilter(): ?array
     {
         if (!$this->process_start_date && !$this->process_end_date) {
@@ -121,7 +110,7 @@ class EmailFilterData extends Data
     }
 
     #[Computed]
-    #[FilterBy(FacadesReadFilter::class)]
+    #[Filter('read_date')]
     public function getReadDateFilter(): ?array
     {
         if (!$this->read_start_date && !$this->read_end_date && $this->read === null) {
@@ -136,7 +125,7 @@ class EmailFilterData extends Data
     }
 
     #[Computed]
-    #[FilterBy(FacadesOrderFilter::class)]
+    #[Filter('order')]
     public function getOrderFilter(): ?array
     {
         if (!$this->order_by || !$this->order) {

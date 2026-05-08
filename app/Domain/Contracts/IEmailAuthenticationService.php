@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Infrastructure\Services;
+namespace App\Domain\Contracts;
 
 use App\Data\EmailAuthentication;
 
-interface EmailAuthenticationService
+interface IEmailAuthenticationService
 {
     /**
      * Authenticate the email using the provided credentials.

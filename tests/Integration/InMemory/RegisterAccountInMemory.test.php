@@ -11,7 +11,7 @@ use App\Infrastructure\Persistence\AccountRepository;
 use App\Infrastructure\Persistence\ClientRepository;
 use App\Infrastructure\Persistence\InMemory\InMemoryAccountRepository;
 use App\Infrastructure\Persistence\InMemory\InMemoryClientRepository;
-use App\Infrastructure\Services\EmailAuthenticationService;
+use App\Domain\Contracts\IEmailAuthenticationService;
 use App\UseCases\Register;
 use App\Util\UUID;
 use Tests\TestCase;
@@ -22,10 +22,10 @@ class registerContainerInMemory
 {
     public readonly AccountRepository $accountRepository;
     public readonly ClientRepository $clientRepository;
-    public readonly EmailAuthenticationService $emailAuthenticationService;
+    public readonly IEmailAuthenticationService $emailAuthenticationService;
     public function __construct()
     {
-        $this->emailAuthenticationService = Mockery::mock(EmailAuthenticationService::class);
+        $this->emailAuthenticationService = Mockery::mock(IEmailAuthenticationService::class);
         $this->emailAuthenticationService->shouldReceive('authenticate')
             ->andReturn(true)
             ->getMock();
@@ -108,7 +108,7 @@ describe('InMemory:Register Account', function () {
 
     it('should not register account - invalid auth', function () {
 
-        $this->emailAuthenticationService = Mockery::mock(EmailAuthenticationService::class);
+        $this->emailAuthenticationService = Mockery::mock(IEmailAuthenticationService::class);
         $this->emailAuthenticationService->shouldReceive('authenticate')
             ->andReturn(false)
             ->getMock();

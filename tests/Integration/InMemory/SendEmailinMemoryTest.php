@@ -7,8 +7,8 @@ use App\Errors\EmailSendFailureError;
 use App\Infrastructure\Persistence\InMemory\InMemoryAccountRepository;
 use App\Infrastructure\Persistence\InMemory\InMemoryEmailRepository;
 use App\Infrastructure\Persistence\InMemory\InMemoryFolderRepository;
-use App\Infrastructure\Services\EmailSenderService;
-use App\Infrastructure\Services\EmailComplementService;
+use App\Domain\Contracts\IEmailSenderService;
+use App\Domain\Services\EmailComplementService;
 use App\UseCases\SendEmail;
 use Tests\TestCase;
 use App\Domain\Enums\Folder as FolderType;
@@ -22,7 +22,7 @@ uses(TestCase::class);
 
 class sendEmailContainerInMemory
 {
-    public readonly EmailSenderService $emailSenderService;
+    public readonly IEmailSenderService $emailSenderService;
     public readonly EmailRepository $emailRepository;
     public readonly EmailComplementService $emailComplementService;
     public readonly EmailComplementRepository $emailComplementRepository;
@@ -31,7 +31,7 @@ class sendEmailContainerInMemory
     public readonly SendEmail $sendEmail;
     public function __construct()
     {
-        $this->emailSenderService = Mockery::mock(EmailSenderService::class);
+        $this->emailSenderService = Mockery::mock(IEmailSenderService::class);
         $this->emailSenderService->shouldReceive('send')
             ->andReturn(true)
             ->getMock();
@@ -97,7 +97,7 @@ describe('InMemory:Send email', function () {
     });
 
     it('should not send email - failed', function () {
-        $emailSenderService = Mockery::mock(EmailSenderService::class);
+        $emailSenderService = Mockery::mock(IEmailSenderService::class);
 
         $emailSenderService->shouldReceive('send')
             ->andReturn(false)

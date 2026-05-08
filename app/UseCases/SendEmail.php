@@ -8,8 +8,8 @@ use App\Data\SendEmailServiceData;
 use App\Infrastructure\Persistence\EmailComplementRepository;
 use App\Infrastructure\Persistence\EmailRepository;
 use App\Infrastructure\Persistence\FolderRepository;
-use App\Infrastructure\Services\EmailComplementService;
-use App\Infrastructure\Services\EmailSenderService;
+use App\Domain\Services\EmailComplementService;
+use App\Domain\Contracts\IEmailSenderService;
 use App\UseCases\Services\SendEmailService;
 
 class SendEmail

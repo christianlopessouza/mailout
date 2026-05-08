@@ -14,7 +14,7 @@ use App\Infrastructure\Persistence\Facades\FacadesemailRepository;
 use App\Infrastructure\Persistence\Facades\FacadesFlagRepository;
 use App\Infrastructure\Persistence\Facades\FacadesFolderRepository;
 use App\UseCases\FilterEmailsByAccount;
-use App\UseCases\Services\EmailFiltersService;
+use App\Infrastructure\Support\EmailFiltersMapper;
 use App\Util\UUID;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -135,7 +135,7 @@ describe('Filter Emails By Account', function () {
 
         $this->filterEmailsByAccount = new FilterEmailsByAccount(
             emailRepository: $this->emailRepository,
-            emailFiltersService: new EmailFiltersService($filters)
+            emailFiltersService: new EmailFiltersMapper($filters)
         );
     });
 

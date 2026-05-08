@@ -1,35 +1,23 @@
-# DECISIONS.md
-Log central de decisões. Mantido pelos personagens, aprovado pelo usuário.
+# DECISIONS
 
-Formato de ID: `DEC-XXX` — sequencial, nunca reutilizado.
-Status: `Ativo` | `Revisado` | `Substituído por DEC-YYY`
+## Refatoração Arquitetural de Serviços e Interfaces
 
----
+**Data:** 2026-05-06
+**Proponente:** Usuário
+**Revisor:** @ARCH
 
-<!-- Decisões registradas conforme o projeto avança -->
+### Contexto
+A estrutura atual de `App\Infrastructure\Services` mistura interfaces de contrato (Domínio) com implementações concretas (Infraestrutura), causando acoplamento e confusão de responsabilidades.
 
-## DEC-001 — Arquitetura Inicial
+### Decisão
+1.  **Isolamento de Contratos:** Interfaces de serviço serão movidas para `App\Domain\Contracts` e prefixadas com `I` (ex: `IEmailSenderService`).
+2.  **Padronização de Infraestrutura:** Implementações concretas serão movidas para `App\Infrastructure\Adapters` e renomeadas com o sufixo `Adapter` (ex: `S3AttachmentAdapter`).
+3.  **Domain Services:** Serviços que contêm lógica de negócio serão movidos para `App\Domain\Services`.
 
-| Campo | Detalhe |
-|-------|---------|
-| **ID** | DEC-001 |
-| **Data** | 2026-04-23 |
-| **Proponente** | @ARCH |
-| **Alternativas** | Monolito tradicional, Microsserviços |
-| **Decisão** | Modular Monolith — domínios separados no mesmo deploy |
-| **Riscos** | Acoplamento acidental quando domínios crescerem; avaliar migração a cada 6 meses |
-| **Status** | Ativo |
+### Riscos
+- Necessidade de atualizar diversos *imports* e *Service Providers*.
+- Risco de quebra de compatibilidade se não executado com cautela.
 
----
-
-## DEC-002 — User Stories Base
-
-| Campo | Detalhe |
-|-------|---------|
-| **ID** | DEC-002 |
-| **Data** | 2026-04-23 |
-| **Proponente** | @BA |
-| **Alternativas** | N/A |
-| **Decisão** | 15 user stories criadas cobrindo fluxo principal |
-| **Riscos** | Funcionalidades pendentes de mapeamento |
-| **Status** | Ativo |
+### Mitigação
+- Refatoração incremental por serviço.
+- Execução de testes após cada etapa.
