@@ -55,8 +55,8 @@ jobs:
       - name: Copy .env.testing
         run: cp .env.testing .env
 
-      - name: Copy environment file
-        run: cp .env.example .env
+      - name: Configure CI database host
+        run: sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
 
       - name: Generate app key
         run: php artisan key:generate
