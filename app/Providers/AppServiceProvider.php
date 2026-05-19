@@ -20,12 +20,14 @@ use App\Domain\Contracts\IAttachmentService;
 use App\Domain\Contracts\IEmailAuthenticationService;
 use App\Domain\Contracts\IEmailSenderService;
 use App\Infrastructure\Adapters\S3AttachmentAdapter;
+use App\Infrastructure\Adapters\RabbitMQAdapter;
 use App\Infrastructure\Adapters\SymfonyEmailAuthenticationAdapter;
 use App\Infrastructure\Adapters\SymfonyEmailSenderAdapter;
 use App\UseCases\FilterEmailsByAccount;
 use App\UseCases\FilterEmailsByClient;
 use App\Infrastructure\Support\EmailFiltersMapper;
 use App\Infrastructure\Support\FilterRegistry;
+use App\Infrastructure\Services\RabbitMQService;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesFolderFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesProcessDateFilter;
 use App\Infrastructure\Persistence\Facades\EmailFilters\FacadesReadFilter;
@@ -65,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(AttachmentRepository::class, FacadesAttachmentRepository::class);
         $this->app->bind(IEmailAuthenticationService::class, SymfonyEmailAuthenticationAdapter::class);
+        $this->app->bind(RabbitMQService::class, RabbitMQAdapter::class);
         $this->app->bind(FilterEmailsByAccount::class, FilterEmailsByAccount::class);
         $this->app->bind(FilterEmailsByClient::class, FilterEmailsByClient::class);
         $this->app->singleton(FilterRegistry::class, function ($app) {

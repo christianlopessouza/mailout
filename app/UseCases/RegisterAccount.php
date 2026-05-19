@@ -5,6 +5,7 @@ namespace App\UseCases;
 use App\Data\EmailAuthentication;
 use App\Data\Input\RegisterAccountInputData;
 use App\Data\Output\RegisterAccountOutputData;
+use App\Domain\Contracts\IEmailAuthenticationService;
 use App\Domain\Entities\Account;
 use App\Domain\Enums\AccountType;
 use App\Errors\AccountAlreadyRegisteredError;
@@ -13,7 +14,6 @@ use App\Errors\UnauthorizedDomainError;
 use App\Helper\Crypto;
 use App\Infrastructure\Persistence\AccountRepository;
 use App\Infrastructure\Persistence\ClientRepository;
-use App\Infrastructure\Services\EmailAuthenticationService;
 use App\Infrastructure\Services\RabbitMQService;
 use App\Util\UUID;
 
@@ -22,7 +22,7 @@ class RegisterAccount
     public function __construct(
         private readonly AccountRepository $accountRepository,
         private readonly ClientRepository $clientRepository,
-        private readonly EmailAuthenticationService $emailAuthenticationService,
+        private readonly IEmailAuthenticationService $emailAuthenticationService,
         private readonly RabbitMQService $rabbitMQService
     ) {}
 
