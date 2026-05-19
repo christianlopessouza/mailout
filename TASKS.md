@@ -29,4 +29,5 @@
 
 | Issue | Status | Branch | Responsavel | Resumo |
 |---|---|---|---|---|
-| [#6](https://github.com/christianlopessouza/mailout/issues/6) | In progress | `IS#6/removeCommittedRealCredentials` | `@SEC`, `@DEV`, `@OPS` | Sanitizar credenciais versionadas, documentar rotacao e validar regressao por teste/varredura |
+| [#6](https://github.com/christianlopessouza/mailout/issues/6) | Done | `IS#6/removeCommittedRealCredentials` | `@SEC`, `@DEV`, `@OPS` | Sanitizar credenciais versionadas, documentar rotacao e validar regressao por teste/varredura |
+| [#5](https://github.com/christianlopessouza/mailout/issues/5) | In progress | `IS#5/fixMissingRabbitMQServiceDependency` | `@ARCH`, `@DEV`, `@OPS`, `@QA` | Resolver dependencia RabbitMQService no cadastro de contas e cobrir publicacao por teste |

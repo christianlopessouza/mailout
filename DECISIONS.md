@@ -93,3 +93,25 @@ Substituir defaults sensiveis por valores locais/placeholders e exigir que coman
 ### Riscos
 - Ambientes que dependiam dos defaults reais precisam configurar variaveis explicitamente.
 - A remocao do codigo nao limpa o historico Git; as credenciais expostas precisam ser rotacionadas nos provedores.
+
+## DEC-005 - Resolver publicacao RabbitMQ via contrato injetavel
+
+**Data:** 2026-05-19  
+**Status:** Aceita  
+**Proponente:** `@ARCH`  
+**Issue:** [#5](https://github.com/christianlopessouza/mailout/issues/5)  
+**Participantes:** `@ARCH`, `@DEV`, `@OPS`, `@QA`
+
+### Contexto
+`RegisterAccount` dependia de `App\Infrastructure\Services\RabbitMQService`, mas esse contrato/classe nao existia no repositorio. O adapter RabbitMQ tambem referenciava `PhpAmqpLib`, mas o pacote nao estava declarado como dependencia direta.
+
+### Decisao
+Criar o contrato `RabbitMQService`, fazer `RabbitMQAdapter` implementa-lo, registrar o binding no container Laravel e adicionar `php-amqplib/php-amqplib` como dependencia direta.
+
+### Alternativas Consideradas
+- Injetar diretamente `RabbitMQAdapter`: rejeitado porque dificulta mock em teste e acopla o use case a infraestrutura concreta.
+- Criar uma classe `RabbitMQService` concreta sem interface: simples, mas menos testavel para o criterio de aceite da issue.
+
+### Riscos
+- A publicacao continua dependente da disponibilidade do RabbitMQ em runtime.
+- O adapter agora conecta de forma lazy no primeiro `publish`, evitando conexao no boot, mas falhas de publicacao ainda precisam de politica operacional em issue futura.
