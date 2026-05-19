@@ -224,16 +224,16 @@ class SyncSpecificEmailCommand extends Command
         config([
             'database.connections.pgsql' => [
                 'driver' => 'pgsql',
-                'host' => 'supermail-postgresql.cf8mcewa40ak.us-east-1.rds.amazonaws.com',
-                'port' => '5432',
-                'database' => 'postgres',
-                'username' => 'supermail_admin',
-                'password' => 'W5%iXx4=W4aoRyd_#WSaz)0Azz{aS%y&',
+                'host' => env('LEGACY_SYNC_PGSQL_HOST', '127.0.0.1'),
+                'port' => env('LEGACY_SYNC_PGSQL_PORT', '5432'),
+                'database' => env('LEGACY_SYNC_PGSQL_DATABASE', 'mailout'),
+                'username' => env('LEGACY_SYNC_PGSQL_USERNAME', 'mailout'),
+                'password' => env('LEGACY_SYNC_PGSQL_PASSWORD', ''),
                 'charset' => 'utf8',
                 'prefix' => '',
                 'prefix_indexes' => true,
                 'search_path' => 'public',
-                'sslmode' => 'prefer',
+                'sslmode' => env('LEGACY_SYNC_PGSQL_SSLMODE', 'prefer'),
             ]
         ]);
 
@@ -241,11 +241,11 @@ class SyncSpecificEmailCommand extends Command
         config([
             'database.connections.mysqlSMAIL' => [
                 'driver' => 'mysql',
-                'host' => '186.237.198.38',
-                'port' => '3306',
-                'database' => 'smail_oficial',
-                'username' => 'smail_user',
-                'password' => 'qIZ,_vfFC{Zp*jhV(h',
+                'host' => env('LEGACY_SYNC_MYSQL_HOST', '127.0.0.1'),
+                'port' => env('LEGACY_SYNC_MYSQL_PORT', '3306'),
+                'database' => env('LEGACY_SYNC_MYSQL_DATABASE', 'mailout_legacy'),
+                'username' => env('LEGACY_SYNC_MYSQL_USERNAME', 'mailout'),
+                'password' => env('LEGACY_SYNC_MYSQL_PASSWORD', ''),
                 'charset' => 'utf8mb4',
                 'collation' => 'utf8mb4_unicode_ci',
                 'prefix' => '',
