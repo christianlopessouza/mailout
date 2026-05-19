@@ -148,13 +148,19 @@ class DBMigrateCommand3 extends Command
                         ->first();
 
                     if (!$verificaEmailConta) {
+                        $senderCredentials = $this->legacySenderCredentials();
+                        if ($senderCredentials === null) {
+                            $this->error('Configure LEGACY_MIGRATION_SMTP_* environment variables before running this migration.');
+                            return 1;
+                        }
+
                         $data_email = (int) new DateTime($email->data_email)->format('Uv');
                         $account = Account::create(
                             email_address: $email->email_conta,
-                            password: Crypto::encrypt('BCNsddU3IeXeOiXGcUk3ie0d7YYabzi9+gzgJ2Vdix6T'),
-                            host: 'email-smtp.us-east-1.amazonaws.com',
-                            port: 587,
-                            username: 'AKIAVAVZ53YBCDCS4VVV',
+                            password: Crypto::encrypt($senderCredentials['password']),
+                            host: $senderCredentials['host'],
+                            port: $senderCredentials['port'],
+                            username: $senderCredentials['username'],
                             type: AccountType::SENDER,
                         );
                         $accountRepository->save($account);
@@ -324,5 +330,23 @@ class DBMigrateCommand3 extends Command
             $template->{$key} = $complements_values->{$key};
         }
         return $template;
+    }
+
+    private function legacySenderCredentials(): ?array
+    {
+        $username = env('LEGACY_MIGRATION_SMTP_USERNAME');
+        $password = env('LEGACY_MIGRATION_SMTP_PASSWORD');
+        $host = env('LEGACY_MIGRATION_SMTP_HOST');
+
+        if (!$username || !$password || !$host) {
+            return null;
+        }
+
+        return [
+            'username' => $username,
+            'password' => $password,
+            'host' => $host,
+            'port' => (int) env('LEGACY_MIGRATION_SMTP_PORT', 587),
+        ];
     }
 }

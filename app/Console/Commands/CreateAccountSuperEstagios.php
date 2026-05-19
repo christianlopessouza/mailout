@@ -51,13 +51,19 @@ class CreateAccountSuperEstagios extends Command
             if ($accountAlreadyExists) {
                 continue;
             }
-            $password = Crypto::encrypt('BCNsddU3IeXeOiXGcUk3ie0d7YYabzi9+gzgJ2Vdix6T');
+            $senderCredentials = $this->legacySenderCredentials();
+            if ($senderCredentials === null) {
+                $this->error('Configure LEGACY_MIGRATION_SMTP_* environment variables before running this migration.');
+                return 1;
+            }
+
+            $password = Crypto::encrypt($senderCredentials['password']);
             $conta = Account::create(
                 email_address: $conta_info->email,
-                username: 'AKIAVAVZ53YBCDCS4VVV',
+                username: $senderCredentials['username'],
                 password: $password,
-                host: 'mail.gruposuper.com.br',
-                port: 587
+                host: $senderCredentials['host'],
+                port: $senderCredentials['port']
             );
 
             $accountRepository->save($conta);
@@ -414,5 +420,23 @@ class CreateAccountSuperEstagios extends Command
 
         // $this->info('Migração concluída com sucesso!');
         // $this->info("Aqui foi" . json_encode($email_arquivo_morto));
+    }
+
+    private function legacySenderCredentials(): ?array
+    {
+        $username = env('LEGACY_MIGRATION_SMTP_USERNAME');
+        $password = env('LEGACY_MIGRATION_SMTP_PASSWORD');
+        $host = env('LEGACY_MIGRATION_SMTP_HOST');
+
+        if (!$username || !$password || !$host) {
+            return null;
+        }
+
+        return [
+            'username' => $username,
+            'password' => $password,
+            'host' => $host,
+            'port' => (int) env('LEGACY_MIGRATION_SMTP_PORT', 587),
+        ];
     }
 }
