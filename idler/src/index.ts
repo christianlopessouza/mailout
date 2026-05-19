@@ -27,6 +27,10 @@ let monitor: QueueMonitorService;
 async function main(): Promise<void> {
   console.log('Starting IDLE Worker...');
 
+  if (!INTERNAL_API_TOKEN) {
+    throw new Error('INTERNAL_API_TOKEN is required for worker API authentication');
+  }
+
   queueClient = await RabbitMQAdapter.create(RABBITMQ_URL);
   const httpClient = new AxiosAdapter(PHP_API_URL, { token: INTERNAL_API_TOKEN });
   const rabbitManagementClient = new AxiosAdapter('http://rabbitmq:15672', { username: 'guest', password: 'guest' });

@@ -41,12 +41,15 @@ Route::get('/ping', function () {
     return response()->json(['ok' => true,"v"=>"1.0.0"]);
 });
 
-// Endpoint interno para o worker IDLE buscar contas ativas
-// Pode ser protegido com token interno se necessário
-Route::get('/accounts/active', ListActiveAccountsController::class);
+// Internal endpoint for the IDLE worker to fetch active accounts.
+Route::middleware(['auth.internal'])
+    ->get('/accounts/active', ListActiveAccountsController::class)
+    ->name('internal.accounts.active');
 
-// Rota interna para IDLE worker salvar emails (sem autenticação de cliente)
-Route::post('/internal/save-email', \App\Http\Master\Controllers\SaveEmailFromIdleController::class);
+// Internal endpoint for the IDLE worker to save inbound emails.
+Route::middleware(['auth.internal'])
+    ->post('/internal/save-email', \App\Http\Master\Controllers\SaveEmailFromIdleController::class)
+    ->name('internal.save-email');
 
 // Rota temporária para teste (sem middleware)
 Route::post('/test-update-email-complement/{id}', UpdateEmailComplementController::class);

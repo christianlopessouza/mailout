@@ -17,7 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             'auth.public.client' => \App\Http\Master\Middleware\AuthClientMiddleware::class,
-            'auth.public.account' => \App\Http\Master\Middleware\AuthAccountMiddleware::class
+            'auth.public.account' => \App\Http\Master\Middleware\AuthAccountMiddleware::class,
+            'auth.internal' => \App\Http\Master\Middleware\AuthInternalMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
