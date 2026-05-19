@@ -115,3 +115,25 @@ Criar o contrato `RabbitMQService`, fazer `RabbitMQAdapter` implementa-lo, regis
 ### Riscos
 - A publicacao continua dependente da disponibilidade do RabbitMQ em runtime.
 - O adapter agora conecta de forma lazy no primeiro `publish`, evitando conexao no boot, mas falhas de publicacao ainda precisam de politica operacional em issue futura.
+
+## DEC-006 - Proteger endpoints internos do worker com token dedicado
+
+**Data:** 2026-05-19  
+**Status:** Aceita  
+**Proponente:** `@SEC`  
+**Issue:** [#7](https://github.com/christianlopessouza/mailout/issues/7)  
+**Participantes:** `@SEC`, `@OPS`, `@DEV`, `@QA`
+
+### Contexto
+Os endpoints `/accounts/active` e `/internal/save-email` eram usados pelo worker IDLE e estavam expostos sem middleware de autenticacao interna.
+
+### Decisao
+Criar middleware `auth.internal` baseado em `INTERNAL_API_TOKEN`, aceitando Bearer token ou header `X-Internal-Token`, e aplica-lo aos endpoints internos do worker.
+
+### Alternativas Consideradas
+- Reutilizar token de cliente: rejeitado porque o worker e um ator interno e nao representa um cliente especifico.
+- Proteger apenas por rede privada: insuficiente no codigo e dificil de validar em testes automatizados.
+
+### Riscos
+- Ambientes do worker precisam configurar `INTERNAL_API_TOKEN`; sem token o worker agora falha no startup.
+- Token unico interno exige rotacao e armazenamento seguro em ambiente operacional.

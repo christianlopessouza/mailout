@@ -45,4 +45,6 @@ return [
     ],
 
     'smail_api_url' => env('SMAIL_API_URL', 'https://sua-api-default.com/api'),
+
+    'internal_api_token' => env('INTERNAL_API_TOKEN'),
 ];

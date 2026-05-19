@@ -30,4 +30,5 @@
 | Issue | Status | Branch | Responsavel | Resumo |
 |---|---|---|---|---|
 | [#6](https://github.com/christianlopessouza/mailout/issues/6) | Done | `IS#6/removeCommittedRealCredentials` | `@SEC`, `@DEV`, `@OPS` | Sanitizar credenciais versionadas, documentar rotacao e validar regressao por teste/varredura |
-| [#5](https://github.com/christianlopessouza/mailout/issues/5) | In progress | `IS#5/fixMissingRabbitMQServiceDependency` | `@ARCH`, `@DEV`, `@OPS`, `@QA` | Resolver dependencia RabbitMQService no cadastro de contas e cobrir publicacao por teste |
+| [#5](https://github.com/christianlopessouza/mailout/issues/5) | Done | `IS#5/fixMissingRabbitMQServiceDependency` | `@ARCH`, `@DEV`, `@OPS`, `@QA` | Resolver dependencia RabbitMQService no cadastro de contas e cobrir publicacao por teste |
+| [#7](https://github.com/christianlopessouza/mailout/issues/7) | In progress | `IS#7/protectInternalWorkerApiEndpoints` | `@SEC`, `@OPS`, `@DEV`, `@QA` | Proteger endpoints internos do worker com `INTERNAL_API_TOKEN` |

@@ -17,7 +17,7 @@ REDIS_HOST=redis
 REDIS_PORT=6379
 PHP_API_URL=http://app:80/api
 CLIENT_TOKEN=token_do_cliente
-INTERNAL_API_TOKEN=token_interno_opcional
+INTERNAL_API_TOKEN=token_interno_obrigatorio
 ACCOUNT_REFRESH_INTERVAL=3600000
 ```
 
@@ -43,4 +43,3 @@ O worker é construído automaticamente pelo docker-compose:
 ```bash
 docker-compose up idler-worker
 ```
-
